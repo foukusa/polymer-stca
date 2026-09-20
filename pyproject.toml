@@ -37,3 +37,9 @@ stca = ["assets/*.json", "py.typed"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = "-ra"
+
+[project.urls]
+Homepage = "https://github.com/foukusa/polymer-stca"
+Repository = "https://github.com/foukusa/polymer-stca"
+Issues = "https://github.com/foukusa/polymer-stca/issues"
+Documentation = "https://github.com/foukusa/polymer-stca#readme"
