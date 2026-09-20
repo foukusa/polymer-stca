@@ -14,8 +14,14 @@ from urllib.parse import urlparse
 
 try:
     import tomllib
-except ImportError:
-    raise SystemExit("Run this release-only check with Python 3.11 or later.")
+except ModuleNotFoundError:
+    try:
+        import tomli as tomllib
+    except ModuleNotFoundError as exc:
+        raise SystemExit(
+            "Python 3.10 requires tomli. "
+            "Install it with: python -m pip install tomli"
+        ) from exc
 
 PAPER_TITLE = (
     "Interpretable Substructure-Based Screening of Multi-Property Polymer "
