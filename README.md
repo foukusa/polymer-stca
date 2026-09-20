@@ -473,7 +473,7 @@ Please cite the associated manuscript using its verified bibliographic record wh
 
 ## License
 
-Copyright (c) 2026, The University of Tokyo, University College London
+Copyright (c) 2025, The University of Tokyo, University College London
 
 This code is provided for academic peer review purposes under npj Computational Materials submission guidelines. Commercial use and redistribution require written permission.
 
