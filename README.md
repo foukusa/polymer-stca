@@ -93,10 +93,10 @@ The second command is unnecessary for binary-feature-only use. Scientific depend
 
 ### C. Install directly from GitHub after uploading
 
-Replace `YOUR_GITHUB_USERNAME` and the repository name with the actual ones. The repository must contain this project at its root, and the tag must exist. A working Git executable is required:
+Replace `foukusa` and the repository name with the actual ones. The repository must contain this project at its root, and the tag must exist. A working Git executable is required:
 
 ```bash
-python -m pip install "polymer-stca[chem] @ git+https://github.com/YOUR_GITHUB_USERNAME/polymer-stca.git@v0.1.0rc2"
+python -m pip install "polymer-stca[chem] @ git+https://github.com/foukusa/polymer-stca.git@v0.1.0rc2"
 ```
 
 This installs from GitHub **without requiring a PyPI release**. An installation pinned to a full commit hash is preferable for exact computational provenance. Private repositories additionally require authorized Git access. See the [official pip VCS documentation](https://pip.pypa.io/en/stable/topics/vcs-support/) and the project's [step-by-step release guide](docs/RELEASING.md).
@@ -473,7 +473,7 @@ Please cite the associated manuscript using its verified bibliographic record wh
 
 ## License
 
-Copyright (c) 2025, The University of Tokyo, University College London
+Copyright (c) 2026, The University of Tokyo, University College London
 
 This code is provided for academic peer review purposes under npj Computational Materials submission guidelines. Commercial use and redistribution require written permission.
 
@@ -482,7 +482,7 @@ This code is provided for academic peer review purposes under npj Computational 
 For questions or issues, please contact:
 
 - [wang@hvg.t.u-tokyo.ac.jp](mailto:wang@hvg.t.u-tokyo.ac.jp)
-- Laboratory: Kumada-Sato-Fujii-Umemoto Laboratory
+- Laboratory: Kumada-Sato-Fujii-Umemoto Laboratory (URL UTokyo: https://www.hvg.t.u-tokyo.ac.jp/ UCL: https://mdi-group.github.io/)
 - Institution: Department of Electrical Engineering & Information Systems, University of Tokyo
 
 ## Acknowledgments
