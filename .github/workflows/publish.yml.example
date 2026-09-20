@@ -1,0 +1,60 @@
+# INACTIVE: rename to publish.yml only after permission, metadata, and PyPI setup.
+# Configure a PyPI Trusted Publisher for this exact owner/repo/workflow/environment.
+# Protect the pypi environment with deployment rules and reviewers where available.
+name: Publish reviewed STCA package
+on:
+  release:
+    types: [published]
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.release.tag_name }}
+          persist-credentials: false
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.13'
+      - name: Check release metadata and authorization
+        run: python scripts/check_public_release.py
+      - name: Check tag and version before building
+        env:
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
+        run: |
+          python - <<'PY'
+          import ast, os, pathlib, tomllib
+          root = pathlib.Path('.')
+          version = tomllib.loads((root / 'pyproject.toml').read_text())['project']['version']
+          tree = ast.parse((root / 'src/stca/model.py').read_text())
+          values = [ast.literal_eval(n.value) for n in tree.body
+                    if isinstance(n, ast.Assign)
+                    and any(isinstance(t, ast.Name) and t.id == 'PACKAGE_VERSION' for t in n.targets)]
+          if values != [version] or os.environ['RELEASE_TAG'] != f'v{version}':
+              raise SystemExit('Release tag, pyproject version, and package version must agree.')
+          PY
+      - run: python -m pip install ".[chem,dev]"
+      - run: python -m pytest -q
+      - run: python -m build
+      - run: python -m twine check dist/*
+      - uses: actions/upload-artifact@v5
+        with:
+          name: stca-distributions
+          path: dist/
+          if-no-files-found: error
+  publish:
+    needs: build
+    runs-on: ubuntu-latest
+    environment: pypi
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/download-artifact@v6
+        with:
+          name: stca-distributions
+          path: dist/
+      - name: Publish reviewed distributions using OIDC
+        uses: pypa/gh-action-pypi-publish@release/v1

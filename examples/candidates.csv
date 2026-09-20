@@ -1,0 +1,5 @@
+ID,SMILES
+format_demo_1,*CC*
+format_demo_2,*CCO*
+format_demo_3,*c1ccc(cc1)*
+format_demo_4,*CC(=O)N*

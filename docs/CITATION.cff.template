@@ -1,0 +1,17 @@
+cff-version: 1.2.0
+message: "Complete and verify the software and manuscript author lists before activating this citation."
+title: "STCA: interpretable polymer substructure screening"
+version: 0.1.0rc2
+type: software
+authors:
+  - family-names: "REPLACE_WITH_VERIFIED_FAMILY_NAME"
+    given-names: "REPLACE_WITH_VERIFIED_GIVEN_NAME"
+preferred-citation:
+  type: article
+  title: "Interpretable Substructure-Based Screening of Multi-Property Polymer Dielectrics with Prompt-Ready Rules for Rational Design"
+  journal: "npj Computational Materials"
+  authors:
+    - family-names: "REPLACE_WITH_VERIFIED_FAMILY_NAME"
+      given-names: "REPLACE_WITH_VERIFIED_GIVEN_NAME"
+# Add the complete verified author lists, actual repository URL and publication
+# metadata. Do not use copyright holders as a substitute for the paper authors.
