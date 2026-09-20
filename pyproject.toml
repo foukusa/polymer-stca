@@ -1,0 +1,39 @@
+[build-system]
+requires = ["setuptools>=77.0.3", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "polymer-stca"
+version = "0.1.0rc2"
+description = "Interpretable STCA rule screening with archived Tg/EC profiles and custom-data training"
+readme = "README.md"
+license = "LicenseRef-STCA-Academic-Peer-Review"
+license-files = ["LICENSE", "NOTICE"]
+maintainers = [
+  {name = "Weihao Wang", email = "wang@hvg.t.u-tokyo.ac.jp"},
+]
+requires-python = ">=3.10"
+dependencies = ["numpy>=1.24", "pandas>=2.0", "scipy>=1.10"]
+keywords = ["polymer", "STCA", "screening", "MACCS", "interpretable", "dielectrics"]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Programming Language :: Python :: 3",
+  "Topic :: Scientific/Engineering :: Chemistry",
+]
+
+[project.optional-dependencies]
+chem = ["rdkit>=2023.9"]
+dev = ["pytest>=7", "build>=1", "twine>=5"]
+
+[project.scripts]
+stca = "stca.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+stca = ["assets/*.json", "py.typed"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra"
