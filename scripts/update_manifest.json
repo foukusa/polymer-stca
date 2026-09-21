@@ -275,18 +275,22 @@
       "hash_mode": "utf8-lf"
     },
     "scripts/apply_update.py": {
-      "new_sha256": "cdde57ff06d271beb58b3787c99cbd8ed11f96a1218ae28820610743c18f8cf1",
+      "new_sha256": "622bfcb28476d8a0007c69375648dba55d1080676afe078a5ecf4b83289ce249",
       "accepted_sha256": [
         "0158d2f390a30b090eb3c8f774af901d49d8facad81787e03ad50032719deb50",
         "6a00f16d9ff48fdc4c00f7ba76a7b314e6261f93c4c946adb392a6e58cf66682",
+        "b1525708acd1c7986cf20c5ac4916eeae933bd060649d7f4c6e5c94006780cba",
         "cdde57ff06d271beb58b3787c99cbd8ed11f96a1218ae28820610743c18f8cf1",
-        "e721a14980126ac7608505aacecab78c577509f82931bd807f926d7b97c54af2"
+        "e721a14980126ac7608505aacecab78c577509f82931bd807f926d7b97c54af2",
+        "622bfcb28476d8a0007c69375648dba55d1080676afe078a5ecf4b83289ce249"
       ],
       "accepted_ast_sha256": [
         "34b054a41c41dc2363c5820e872d8756d2f7b002891586a05574c0b333943da5",
         "9ec1f1949d2497435f6239959e206a745e69188f556c12c13ada2e61bbe2e628",
+        "c356e644e80c94403ca86db5e9c5f71f6d88dc8f2dac2bf635149154eeab10f8",
         "cd47ef79a5a55bc026c290a01fe0d3ffe67eca47c80d4e296fe58aa0fa4a204c",
-        "e484586237fa87b7d9a52c2ba011a8c6d850998921e7b05a670603b9d9e4a882"
+        "e484586237fa87b7d9a52c2ba011a8c6d850998921e7b05a670603b9d9e4a882",
+        "4b3507bf1a66e93e1216cb0cdfb587e787eb4b0d7dd6000abf97c03f6151f836"
       ],
       "required_existing": false,
       "hash_mode": "utf8-lf"
@@ -726,67 +730,77 @@
       "hash_mode": "utf8-lf"
     },
     "tests/test_cli.py": {
-      "new_sha256": "49c242659c9a19598c905c0afc4adede27085e3d6679ed3d2bfb66cc6957026f",
+      "new_sha256": "7bb19ac4501d15d6b08064990e93303c0660d0c4b49da67c02e8ad4a023ad565",
       "accepted_sha256": [
         "49c242659c9a19598c905c0afc4adede27085e3d6679ed3d2bfb66cc6957026f",
-        "62b86b01caa1977de09514487689300ed563e7507241a858a711cd569affe03b"
+        "62b86b01caa1977de09514487689300ed563e7507241a858a711cd569affe03b",
+        "7bb19ac4501d15d6b08064990e93303c0660d0c4b49da67c02e8ad4a023ad565"
       ],
       "accepted_ast_sha256": [
-        "d0b181139b97b4e68e20409f94a8e9bcfcfe392a4f73e0bcafa87759c228f902"
+        "d0b181139b97b4e68e20409f94a8e9bcfcfe392a4f73e0bcafa87759c228f902",
+        "17a7394b8465184d3243ee6a887f6b7c535dc3addafb00dd9ebad21467ff8be4"
       ],
       "required_existing": false,
       "hash_mode": "utf8-lf"
     },
     "tests/test_core.py": {
-      "new_sha256": "379abb360848fa825992f3bfa1a7494a65cb8f9be31942d259ba1f7864236be1",
+      "new_sha256": "ed45fcc03b84b1ac6413a93d7a8b5ae2ae83e9b41d1176798c82b6c86aa38604",
       "accepted_sha256": [
         "23f424e80b8d6a211a82454876117be86ef4ec36292a64215fa33c35bb9ac68e",
         "379abb360848fa825992f3bfa1a7494a65cb8f9be31942d259ba1f7864236be1",
-        "5aa2de8ca16feed127e18ec062e8e94931c91db084cecc3cacee440b1faf9608"
+        "5aa2de8ca16feed127e18ec062e8e94931c91db084cecc3cacee440b1faf9608",
+        "ed45fcc03b84b1ac6413a93d7a8b5ae2ae83e9b41d1176798c82b6c86aa38604"
       ],
       "accepted_ast_sha256": [
         "634003aa0b1b721b089dae87738136bb07d09f55ff7157018e7caa4276679ef4",
-        "d6091a0756203ba3ff3560f44c5eaf804be028bc7adf18ddac4a3302fa4bfe35"
+        "d6091a0756203ba3ff3560f44c5eaf804be028bc7adf18ddac4a3302fa4bfe35",
+        "8f6784c63d671c8cdc044956cd1672c59b061860598dab111abf0736850c12d1"
       ],
       "required_existing": false,
       "hash_mode": "utf8-lf"
     },
     "tests/test_documented_usage.py": {
-      "new_sha256": "916507862a43ac85c30b1cbc7c389cb6f0f2c70be93a52fc8532658274c9fcf1",
+      "new_sha256": "eb3fc1f8c74face09da69d9270c10325b5b355995119766cf0b6794eed85488c",
       "accepted_sha256": [
         "916507862a43ac85c30b1cbc7c389cb6f0f2c70be93a52fc8532658274c9fcf1",
         "e510ad8d507bfade071bc46635a660baa14bb35a918ddb6ea96f81319f7950ac",
-        "ff698a8ddb4116efa9f250540728ba3b093cbf130de3fb1f990f4809f3a1d62b"
+        "ff698a8ddb4116efa9f250540728ba3b093cbf130de3fb1f990f4809f3a1d62b",
+        "eb3fc1f8c74face09da69d9270c10325b5b355995119766cf0b6794eed85488c"
       ],
       "accepted_ast_sha256": [
         "8af3b8930414fd132b4748cba678fd76962b5bb967ded2c5b3b7dea6791e64a1",
         "996e73de6611360d6a64eef29d01d874ca226466f2dbe550b3e3696f4b494f43",
-        "f4e2979e139227814805c82b07218d686633e8a036bc9ff5c1ce2b00733c1ade"
+        "f4e2979e139227814805c82b07218d686633e8a036bc9ff5c1ce2b00733c1ade",
+        "1838e41c6e36aa59d6f33b7e98e25d8fde725b7eb2c8233fb81a3992f7e1e718"
       ],
       "required_existing": false,
       "hash_mode": "utf8-lf"
     },
     "tests/test_protocol_audit.py": {
-      "new_sha256": "d7defa5b3d85a81e750b539eaeb531516bcdc5833508783a11b2d764d715cd05",
+      "new_sha256": "8635e53a00c8f6247aebc460059f5197a7ac2a8a546b3f098dd757f90add2f19",
       "accepted_sha256": [
         "2f2ca22c7ae7d5c116ebaa48ca8415c6c62d3aa70b6bc6d6911df258dec85c39",
         "3ddbc83a088d0fed6a364bca21bf45d044cb689aee66c73be0701214c66a144e",
-        "d7defa5b3d85a81e750b539eaeb531516bcdc5833508783a11b2d764d715cd05"
+        "d7defa5b3d85a81e750b539eaeb531516bcdc5833508783a11b2d764d715cd05",
+        "8635e53a00c8f6247aebc460059f5197a7ac2a8a546b3f098dd757f90add2f19"
       ],
       "accepted_ast_sha256": [
         "0b8ae526242c73ff7ecba8dee9d4bbfc70848e821ff90950d6e2e000b82ba853",
-        "f9c52a8fb048a5187316e90ab9dfd42d4da6964ce21b1c959a75d497f25fa318"
+        "f9c52a8fb048a5187316e90ab9dfd42d4da6964ce21b1c959a75d497f25fa318",
+        "c913f17adc5c439240c513a4148bd0c7809baf0bb6058f5ca98a7d1403819c53"
       ],
       "required_existing": false,
       "hash_mode": "utf8-lf"
     },
     "tests/test_release_layout.py": {
-      "new_sha256": "784759abf260aa53f85977f95192e50d6f7f68760d6f2c1597e48e99f610f9a0",
+      "new_sha256": "799dd81da8a64f374443bbe06ae4e6463def2c759e25bc27a0f930e4c2c21669",
       "accepted_sha256": [
-        "784759abf260aa53f85977f95192e50d6f7f68760d6f2c1597e48e99f610f9a0"
+        "784759abf260aa53f85977f95192e50d6f7f68760d6f2c1597e48e99f610f9a0",
+        "799dd81da8a64f374443bbe06ae4e6463def2c759e25bc27a0f930e4c2c21669"
       ],
       "accepted_ast_sha256": [
-        "5eca8c58a128122bcd8284514145f0a5cd63f3c6fecff2c0a9c030352b543b80"
+        "5eca8c58a128122bcd8284514145f0a5cd63f3c6fecff2c0a9c030352b543b80",
+        "d41ed6d87b0ca4fe9dcf8051efb6cc2fbfbce2df42721571c21486d52518b696"
       ],
       "required_existing": false,
       "hash_mode": "utf8-lf"
@@ -803,12 +817,14 @@
       "new_sha256": "a4cb15a978b02bbe0f1ae9b5b4bffa522f83e40eef323556c98537800758b17d"
     },
     "tests/test_verified_profiles.py": {
-      "new_sha256": "30c5dfc56f9999007092bafa8ecda753b2ac08c042a653bff1c945337af73375",
+      "new_sha256": "0aedaaed5f723a96776008cf3fac5341d6f535861a8252ac2cf689bd1aaf2504",
       "accepted_sha256": [
-        "30c5dfc56f9999007092bafa8ecda753b2ac08c042a653bff1c945337af73375"
+        "30c5dfc56f9999007092bafa8ecda753b2ac08c042a653bff1c945337af73375",
+        "0aedaaed5f723a96776008cf3fac5341d6f535861a8252ac2cf689bd1aaf2504"
       ],
       "accepted_ast_sha256": [
-        "c5dd7f6d20bb08023f5465c4b6b73be194d4f8dd96fcb36b60f7610e1153f796"
+        "c5dd7f6d20bb08023f5465c4b6b73be194d4f8dd96fcb36b60f7610e1153f796",
+        "d828b7c0b0f3b0b36421d7336eb15c360a7c09a97925c9d3e4730525a0a3dfde"
       ],
       "required_existing": false,
       "hash_mode": "utf8-lf"
@@ -914,6 +930,50 @@
       "required_existing": false,
       "hash_mode": "utf8-lf",
       "new_sha256": "aa525c4a3cbefebd0330ebfea3f46dc04e9ed6ecdc16f35f30659be34f1cb60f"
+    },
+    "scripts/repair_ci.py": {
+      "accepted_sha256": [
+        "11dc9aeb58cbb65233b3fdca31522964271481baf3ebf92cdb8ce67fc3a6e54f"
+      ],
+      "accepted_ast_sha256": [
+        "8a3d24d43710b11918ecd304fd068645561640445dde4c96d697bebf9bac4e95"
+      ],
+      "required_existing": false,
+      "hash_mode": "utf8-lf",
+      "new_sha256": "11dc9aeb58cbb65233b3fdca31522964271481baf3ebf92cdb8ce67fc3a6e54f"
+    },
+    "tests/test_updated_checkout.py": {
+      "accepted_sha256": [
+        "d9e1ad1cdb220f02604e2a6657d57ed02746f2adf0f23ece6c3fc72f0d3f19a0"
+      ],
+      "accepted_ast_sha256": [
+        "3c0597cc1c13f668f7397cd5de72c2a18464e79589111ac83374f562124437e2"
+      ],
+      "required_existing": false,
+      "hash_mode": "utf8-lf",
+      "new_sha256": "d9e1ad1cdb220f02604e2a6657d57ed02746f2adf0f23ece6c3fc72f0d3f19a0"
+    },
+    "tests/test_text_encoding.py": {
+      "accepted_sha256": [
+        "99761d597aab8802895b4a00e990dd01bb428b11178f4a7a35568c45a0f56c78"
+      ],
+      "accepted_ast_sha256": [
+        "d56e7f7d30c2daeb0224e424ef066ee1d38c50f2ce8d2e68df82ac0e9cc5e38f"
+      ],
+      "required_existing": false,
+      "hash_mode": "utf8-lf",
+      "new_sha256": "99761d597aab8802895b4a00e990dd01bb428b11178f4a7a35568c45a0f56c78"
+    },
+    "scripts/fix_text_encoding.py": {
+      "accepted_sha256": [
+        "970c1148794612cdf2b2ae43c65f2d2353723a1d1370cc085964c271143c131f"
+      ],
+      "accepted_ast_sha256": [
+        "66634545b88b4ba8ddf9251d2f5ded1f10d7ef4675d7240ebbe1e0ca0164dc87"
+      ],
+      "required_existing": false,
+      "hash_mode": "utf8-lf",
+      "new_sha256": "970c1148794612cdf2b2ae43c65f2d2353723a1d1370cc085964c271143c131f"
     }
   },
   "protected_scientific_assets": {
@@ -933,7 +993,7 @@
   "payload_hash_policy": "UTF-8 text is LF-canonicalized; CRLF alone is permitted. Binary/exact entries require byte-identical content.",
   "reference_files": {
     "README.md": {
-      "new_sha256": "43188931dd7e4337efe30ebfaac5d76f93e9227d71460a90530397f4d43919dc",
+      "new_sha256": "6fd80179b6f7db90f587b6f4e1110a804b0119f2e0d06fb82f74ae89e24697ef",
       "hash_mode": "utf8-lf"
     },
     "LICENSE": {
@@ -945,11 +1005,11 @@
       "hash_mode": "utf8-lf"
     },
     "pyproject.toml": {
-      "new_sha256": "16160f167f827c0a89de28252f229c6071efad320dc66d260522ec6688ab6439",
+      "new_sha256": "cf327766fd333fe2ddaad69eb6b5202d411873a746cdada8d292a28d48e81672",
       "hash_mode": "utf8-lf"
     },
     ".gitignore": {
-      "new_sha256": "a4520e85d2491629aa5055045ef62161ea26344db4eb09e307aa90f080008706",
+      "new_sha256": "d3d2da4139b13c337806bad6db31b8ad58270a3680848e5d0d68bbdc812978ab",
       "hash_mode": "utf8-lf"
     }
   },

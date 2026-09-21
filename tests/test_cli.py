@@ -86,6 +86,6 @@ def test_cli_smiles_custom_training_with_synthetic_targets(tmp_path):
     model=ScreeningModel.load(root/'model.json')
     assert model.artifact['feature_spec']['kind']=='rdkit_maccs167'
     assert model.provenance['n_source_records']==24
-    metrics=json.loads((root/'test_metrics.json').read_text())
+    metrics=json.loads((root/'test_metrics.json').read_text(encoding="utf-8"))
     assert len(metrics)==1 and metrics[0]['n']==6
     assert metrics[0]['group_overlap_audit']=='disjoint'

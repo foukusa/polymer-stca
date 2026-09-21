@@ -98,7 +98,7 @@ def test_metrics_implementation_independent():
 
 
 def test_receipt_is_record_of_real_fit_not_full_claim():
-    receipt=json.loads(files('stca').joinpath('assets','verified_refit_summary.json').read_text())
+    receipt=json.loads(files('stca').joinpath('assets','verified_refit_summary.json').read_text(encoding="utf-8"))
     assert len(receipt['rows'])==22
     assert all(r['final_rule_status']=='MATCH' for r in receipt['rows'])
     assert 'precomputed correlation' in ' '.join(receipt['scope_limitations'])

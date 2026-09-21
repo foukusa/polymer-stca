@@ -229,6 +229,40 @@ def license_plan(repo: Path, rules: dict, update_license: bool):
     return updated, new_notice.encode('utf-8')
 
 
+
+def manifest_for_updated_checkout(repo: Path, rules: dict, plan: list):
+    """Hash the merged documents, not the unmerged distribution templates.
+
+    Payload files were validated before planning; their digests are unchanged.
+    Only the explicitly merged/protected reference documents get new digests.
+    Source validation is never bypassed and the staged manifest is not mutated.
+    The returned guards also protect unchanged reference files from a race.
+    """
+    updated = json.loads(json.dumps(rules))
+    planned = {relative: new for relative, _old, new in plan}
+    guards = {}
+    for relative, item in updated.get('reference_files', {}).items():
+        path = safe_path(repo, relative)
+        current = path.read_bytes() if path.exists() else None
+        guards[relative] = current
+        content = planned.get(relative, current)
+        if content is None:
+            raise ValueError(f'Missing merged reference file: {relative}')
+        mode = item.get('hash_mode', 'exact')
+        if mode == 'utf8-lf':
+            checked = lf_text(content)
+        elif mode == 'exact':
+            checked = content
+        else:
+            raise ValueError(f'Unknown payload hash mode: {mode}')
+        item['new_sha256'] = sha(checked)
+    # Do not accept arbitrary edits to code/model digests or local source files.
+    assert updated['payload_files'] == rules['payload_files']
+    assert updated['protected_scientific_assets'] == rules['protected_scientific_assets']
+    data = (json.dumps(updated, indent=2, ensure_ascii=False) + '\n').encode('utf-8')
+    return data, guards
+
+
 def main(argv=None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--repo', default=r'D:\hongo\polymer-stca')
@@ -294,11 +328,15 @@ def main(argv=None) -> int:
     add('README.md', readme_edit(old_readme, license_bytes.decode('utf-8-sig')).encode())
     ignore_path = safe_path(repo, '.gitignore')
     ignore = ignore_path.read_text(encoding='utf-8-sig') if ignore_path.exists() else ''
-    extra = [line for line in (SOURCE / '.gitignore').read_text().splitlines()
+    extra = [line for line in (SOURCE / '.gitignore').read_text(encoding="utf-8").splitlines()
              if line.strip() and not line.startswith('#') and line not in ignore.splitlines()]
     if extra:
         add('.gitignore', (ignore.rstrip() + '\n\n# STCA local/private artifacts\n' + '\n'.join(extra) + '\n').encode())
-    add('scripts/update_manifest.json', MANIFEST.read_bytes())
+    # The resulting repository is used as a source by CI and future updates.
+    # Keeping the template hashes here would falsely mark preserved Contact,
+    # copyright years, URLs and even whitespace merges as a damaged payload.
+    manifest_bytes, reference_guards = manifest_for_updated_checkout(repo, rules, plan)
+    add('scripts/update_manifest.json', manifest_bytes)
     print(f'STCA {VERSION}\nRepository root: {repo}\nPlanned changes: {len(plan)}')
     for relative, old, new in plan:
         label = 'RETIRE' if new is None else ('ADD' if old is None else 'UPDATE')
@@ -318,6 +356,11 @@ def main(argv=None) -> int:
         current = path.read_bytes() if path.exists() else None
         if current != old:
             raise ValueError(f'File changed during preflight: {relative}. Nothing written.')
+    for relative, expected in reference_guards.items():
+        path = safe_path(repo, relative)
+        actual = path.read_bytes() if path.exists() else None
+        if actual != expected:
+            raise ValueError(f'Reference file changed during preflight: {relative}. Nothing written.')
     backup = repo.parent / ('STCA_update_backup_' + datetime.now().strftime('%Y%m%d_%H%M%S_%f'))
     backup.mkdir()
     for relative, old, new in plan:

@@ -106,7 +106,7 @@ def test_bundled_synthetic_smiles_demo(tmp_path):
     base = tmp_path / "runs/synthetic_smiles"
     model = ScreeningModel.load(base / "model.json")
     assert model.provenance["n_source_records"] == 24
-    metrics = json.loads((base / "metrics.json").read_text())
+    metrics = json.loads((base / "metrics.json").read_text(encoding="utf-8"))
     assert metrics["n"] == 6
     assert metrics["group_overlap_audit"] == "disjoint"
     assert "SYNTHETIC SOFTWARE DEMO ONLY" in run.stdout
@@ -129,7 +129,7 @@ def test_release_gate_accepts_explicit_fixture_not_real_authorization(tmp_path):
         "profile_scope_reviewed": True,
         "public_distribution_authorized": True,
         "pypi_project_name_confirmed": True,
-    }))
+    }), encoding="utf-8")
     assert _gate().check(tmp_path) == []
 
 

@@ -15,9 +15,9 @@ ROOT = Path(__file__).resolve().parents[1]
 
 def test_release_version_is_consistent():
     assert __version__ == '1.0'
-    assert 'version = "1.0"' in (ROOT / 'pyproject.toml').read_text()
-    assert 'version: "1.0"' in (ROOT / 'docs/CITATION.cff.template').read_text()
-    assert 'version **1.0**' in (ROOT / 'CITATION.md').read_text() or 'version 1.0' in (ROOT / 'CITATION.md').read_text()
+    assert 'version = "1.0"' in (ROOT / 'pyproject.toml').read_text(encoding="utf-8")
+    assert 'version: "1.0"' in (ROOT / 'docs/CITATION.cff.template').read_text(encoding="utf-8")
+    assert 'version **1.0**' in (ROOT / 'CITATION.md').read_text(encoding="utf-8") or 'version 1.0' in (ROOT / 'CITATION.md').read_text(encoding="utf-8")
 
 
 @pytest.mark.parametrize('protocol', ['paper', 'source_locked', 'legacy_snapshot'])
@@ -31,14 +31,14 @@ def test_repository_has_no_extra_project_directory():
     assert (ROOT / 'src/stca/model.py').is_file()
     assert not (ROOT / 'polymer-stca').exists()
     assert not (ROOT / 'STCA_GitHub').exists()
-    assert r'D:\hongo\polymer-stca' in (ROOT / 'docs/LOCAL_UPDATE.md').read_text()
+    assert r'D:\hongo\polymer-stca' in (ROOT / 'docs/LOCAL_UPDATE.md').read_text(encoding="utf-8")
 
 
 def test_current_public_docs_use_one_release_label():
     for path in [*ROOT.glob('*.md'), *ROOT.glob('docs/*.md')]:
         text = path.read_text(encoding='utf-8')
         assert not re.search(r'0\.1\.0rc\d|\brc[1-4]\b|polymer-stca-main|release_check', text, re.I), path
-    receipt = json.loads(files('stca').joinpath('assets/verified_refit_summary.json').read_text())
+    receipt = json.loads(files('stca').joinpath('assets/verified_refit_summary.json').read_text(encoding="utf-8"))
     assert receipt['package_version'] == '1.0'
 
 
@@ -47,8 +47,8 @@ def checkout(tmp_path):
     shutil.copytree(ROOT, dest, ignore=shutil.ignore_patterns(
         '__pycache__', '*.egg-info', '.pytest_cache', 'build', 'dist', '.git', '.venv'))
     (dest / '.git').mkdir()
-    (dest / '.git/config').write_text('preserve git configuration')
-    (dest / 'PRIVATE_measurements.csv').write_text('private input')
+    (dest / '.git/config').write_text('preserve git configuration', encoding="utf-8")
+    (dest / 'PRIVATE_measurements.csv').write_text('private input', encoding="utf-8")
     return dest
 
 
@@ -64,7 +64,7 @@ def content_snapshot(repo):
 def test_updater_dry_run_is_read_only(tmp_path):
     repo = checkout(tmp_path)
     p = repo / 'pyproject.toml'
-    p.write_text(p.read_text().replace('version = "1.0"', 'version = "0.0.0"'))
+    p.write_text(p.read_text(encoding="utf-8").replace('version = "1.0"', 'version = "0.0.0"'), encoding="utf-8")
     before = content_snapshot(repo)
     result = run_update(repo)
     assert result.returncode == 0, result.stderr
@@ -75,19 +75,19 @@ def test_updater_dry_run_is_read_only(tmp_path):
 def test_updater_keeps_git_private_data_contacts_and_urls(tmp_path):
     repo = checkout(tmp_path)
     p = repo / 'README.md'
-    p.write_text(p.read_text().replace('## Contact\n', '## Contact\n\nPreserve my laboratory contact notes.\n'))
+    p.write_text(p.read_text(encoding="utf-8").replace('## Contact\n', '## Contact\n\nPreserve my laboratory contact notes.\n'), encoding="utf-8")
     p = repo / 'pyproject.toml'
-    p.write_text(p.read_text().replace('version = "1.0"', 'version = "0.0.0"') + '\n[tool.my_local]\nvalue = "keep"\n')
+    p.write_text(p.read_text(encoding="utf-8").replace('version = "1.0"', 'version = "0.0.0"') + '\n[tool.my_local]\nvalue = "keep"\n', encoding="utf-8")
     p = repo / 'LICENSE'
-    p.write_text(p.read_text().replace('2025', '2026'))
+    p.write_text(p.read_text(encoding="utf-8").replace('2025', '2026'), encoding="utf-8")
     before = {name: (repo / name).read_bytes() for name in ['.git/config', 'PRIVATE_measurements.csv', 'LICENSE', 'NOTICE']}
     result = run_update(repo, '--apply')
     assert result.returncode == 0, result.stderr
     assert all((repo / name).read_bytes() == data for name, data in before.items())
-    assert 'Preserve my laboratory contact notes.' in (repo / 'README.md').read_text()
-    assert (repo / 'LICENSE').read_text().strip() in (repo / 'README.md').read_text()
-    assert '[tool.my_local]' in (repo / 'pyproject.toml').read_text()
-    assert 'version = "1.0"' in (repo / 'pyproject.toml').read_text()
+    assert 'Preserve my laboratory contact notes.' in (repo / 'README.md').read_text(encoding="utf-8")
+    assert (repo / 'LICENSE').read_text(encoding="utf-8").strip() in (repo / 'README.md').read_text(encoding="utf-8")
+    assert '[tool.my_local]' in (repo / 'pyproject.toml').read_text(encoding="utf-8")
+    assert 'version = "1.0"' in (repo / 'pyproject.toml').read_text(encoding="utf-8")
     assert not (repo / 'polymer-stca').exists()
     backups = list(tmp_path.glob('STCA_update_backup_*'))
     assert len(backups) == 1
@@ -102,7 +102,7 @@ def test_updater_keeps_git_private_data_contacts_and_urls(tmp_path):
 def test_updater_unknown_source_change_blocks_all_writes(tmp_path):
     repo = checkout(tmp_path)
     p = repo / 'src/stca/scan.py'
-    p.write_text(p.read_text() + '\nLOCAL_ALGORITHM_CHANGE = True\n')
+    p.write_text(p.read_text(encoding="utf-8") + '\nLOCAL_ALGORITHM_CHANGE = True\n', encoding="utf-8")
     before = content_snapshot(repo)
     result = run_update(repo, '--apply')
     assert result.returncode == 2 and 'LOCAL_EDIT_CONFLICT' in result.stderr
@@ -113,7 +113,7 @@ def test_updater_unknown_source_change_blocks_all_writes(tmp_path):
 def test_updater_changed_snapshot_blocks_all_writes(tmp_path):
     repo = checkout(tmp_path)
     p = repo / 'src/stca/assets/tg_high_si20260822.json'
-    doc = json.loads(p.read_text()); doc['direction'] = 'low'; p.write_text(json.dumps(doc))
+    doc = json.loads(p.read_text(encoding="utf-8")); doc['direction'] = 'low'; p.write_text(json.dumps(doc), encoding="utf-8")
     before = content_snapshot(repo)
     result = run_update(repo, '--apply')
     assert result.returncode == 2 and 'SI rule snapshot' in result.stderr

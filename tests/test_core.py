@@ -232,11 +232,11 @@ def test_group_split_and_evaluation_leakage_guard():
 
 def test_legacy_join_checks_id_not_position(tmp_path):
     fp=tmp_path/'fp.csv';prop=tmp_path/'y.csv'
-    fp.write_text('a,'+'0'*167+'\nb,'+'0'*36+'1'+'0'*130+'\n')
-    prop.write_text('b,20\na,10\n')
+    fp.write_text('a,'+'0'*167+'\nb,'+'0'*36+'1'+'0'*130+'\n', encoding="utf-8")
+    prop.write_text('b,20\na,10\n', encoding="utf-8")
     X,y,ids=load_legacy_pair(fp,prop)
     assert ids.tolist()==['a','b'] and y.tolist()==[10,20] and X[1,36]==1
-    prop.write_text('a,10\nc,20\n')
+    prop.write_text('a,10\nc,20\n', encoding="utf-8")
     with pytest.raises(STCAError):load_legacy_pair(fp,prop)
 
 

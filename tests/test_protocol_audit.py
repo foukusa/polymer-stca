@@ -216,7 +216,7 @@ def make_realdata_manifest_fixture(tmp_path):
             pd.DataFrame({'id':ids,'y':b}).to_csv(yp,index=False,header=False)
             for p in (fp,yp):input_files.append({'property':prop,'split':split,'file':p.name,'sha256':sha256(p.read_bytes()).hexdigest()})
     m={'config':cfg,'input_files':input_files}
-    (run/'realdata/run_manifest.json').write_text(json.dumps(m))
+    (run/'realdata/run_manifest.json').write_text(json.dumps(m), encoding="utf-8")
     return run,m
 
 
@@ -224,14 +224,14 @@ def test_replay_uses_all_eight_original_inputs_and_checks_hashes(tmp_path):
     run,m=make_realdata_manifest_fixture(tmp_path)
     data,a=load_manifest_data(m);assert len(a)==8
     assert data['tg']['train'][0].shape==(120,167)
-    p=Path(m['config']['ec_dir'])/'morgen_normal_ec.csv';p.write_text(p.read_text()+'\n')
+    p=Path(m['config']['ec_dir'])/'morgen_normal_ec.csv';p.write_text(p.read_text(encoding="utf-8")+'\n', encoding="utf-8")
     with pytest.raises(STCAError,match='INPUT_CHANGED'):load_manifest_data(m)
 
 
 def test_replay_pretrained_only_does_not_require_core_or_family(tmp_path):
     run,_=make_realdata_manifest_fixture(tmp_path);out=tmp_path/'out'
     assert replay_main(['--run-dir',str(run),'--output',str(out),'--mode','screen_only'])==0
-    status=json.loads((out/'status.json').read_text());assert not status['errors']
+    status=json.loads((out/'status.json').read_text(encoding="utf-8"));assert not status['errors']
     assert len(status['tasks'])==3
     assert not status['automatic_certification']
     assert len(pd.read_csv(out/'final_rule_parity.csv'))==11
@@ -240,7 +240,7 @@ def test_replay_pretrained_only_does_not_require_core_or_family(tmp_path):
 def test_missing_family_reported_not_replaced(tmp_path):
     run,_=make_realdata_manifest_fixture(tmp_path);out=tmp_path/'out'
     assert replay_main(['--run-dir',str(run),'--output',str(out)])==2
-    status=json.loads((out/'status.json').read_text())
+    status=json.loads((out/'status.json').read_text(encoding="utf-8"))
     missing=[r for r in status['tasks'] if r['status']=='REFERENCE_FAMILY_MISSING']
     assert {r['task'] for r in missing}=={'ec-low','ec-high'}
 
@@ -278,12 +278,12 @@ def test_replay_compares_same_complete_family_with_and_without_external_selectio
     pd.DataFrame(rows).to_csv(p,index=False)
     out=tmp_path/'out'
     assert replay_main(['--run-dir',str(run),'--output',str(out)])==0
-    status=json.loads((out/'status.json').read_text());assert not status['errors']
+    status=json.loads((out/'status.json').read_text(encoding="utf-8"));assert not status['errors']
     for task in ['ec-low','ec-high']:
         protocols={r['protocol'] for r in status['tasks'] if r['task']==task}
         assert {'source_locked','template_source_locked','electrical_primary','archived_snapshot'}==protocols
-        a=json.loads((out/f'{task}_template_source_locked.json').read_text())
-        b=json.loads((out/f'{task}_electrical_primary.json').read_text())
+        a=json.loads((out/f'{task}_template_source_locked.json').read_text(encoding="utf-8"))
+        b=json.loads((out/f'{task}_electrical_primary.json').read_text(encoding="utf-8"))
         assert not a['provenance']['external_labels_used_for_fit']
         assert b['provenance']['external_labels_used_for_fit']
         assert a['signed_rankings']==b['signed_rankings']
