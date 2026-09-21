@@ -1,4 +1,6 @@
-# Keep executable text and reference artifact digests consistent across platforms.
+# Use LF for checked-out text, including this file and extensionless templates.
+# text=auto keeps binary files binary; this setting is local to this repository.
+* text=auto eol=lf
 *.py text eol=lf
 *.json text eol=lf
 *.md text eol=lf

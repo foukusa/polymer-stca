@@ -25,6 +25,40 @@ def sha(content: bytes) -> str:
     return hashlib.sha256(content).hexdigest()
 
 
+def lf_text(content: bytes) -> bytes:
+    """Canonicalize CRLF only, for manifest-declared UTF-8 text.
+
+    Do not strip whitespace, a BOM, or standalone CR bytes: those are content
+    changes, not Git's LF/CRLF conversion. Binary payloads never use this path.
+    """
+    content.decode('utf-8')  # Reject invalid UTF-8 rather than guess an encoding.
+    if b'\x00' in content:
+        raise ValueError('NUL byte in a manifest-declared text payload.')
+    return content.replace(b'\r\n', b'\n')
+
+
+def verified_payload(content: bytes, item: dict, relative: str) -> bytes:
+    """Check the shipped digest without rejecting a Windows text checkout.
+
+    The distributed reference text is LF. Only entries explicitly marked
+    utf8-lf permit CRLF -> LF before hashing. All other bytes remain significant,
+    and exact/binary entries retain byte-for-byte verification.
+    """
+    mode = item.get('hash_mode', 'exact')
+    try:
+        if mode == 'utf8-lf':
+            checked = lf_text(content)
+        elif mode == 'exact':
+            checked = content
+        else:
+            raise ValueError(f'Unknown payload hash mode: {mode}')
+    except (UnicodeError, ValueError) as exc:
+        raise ValueError(f'Damaged update payload: {relative}') from exc
+    if sha(checked) != item['new_sha256']:
+        raise ValueError(f'Damaged update payload: {relative}')
+    return checked
+
+
 def asthash(content: bytes) -> str | None:
     try:
         tree = ast.parse(content.decode('utf-8-sig'))
@@ -61,8 +95,14 @@ def safe_path(root: Path, relative: str) -> Path:
 
 def accepted(content: bytes, item: dict, relative: str) -> bool:
     hashes = item.get('accepted_sha256', [])
-    if sha(content) in hashes or sha(content.replace(b'\r\n', b'\n')) in hashes:
+    if sha(content) in hashes:
         return True
+    if item.get('hash_mode') == 'utf8-lf':
+        try:
+            if sha(lf_text(content)) in hashes:
+                return True
+        except (UnicodeError, ValueError):
+            return False
     if relative.endswith('.py'):
         value = asthash(content)
         return bool(value and value in item.get('accepted_ast_sha256', []))
@@ -156,9 +196,8 @@ def main(argv=None) -> int:
         if not path.is_file() or normalized_json(path.read_bytes()) != digest:
             raise ValueError(f'Changed or missing SI rule snapshot: {relative}. No files were changed.')
     for relative, item in rules['payload_files'].items():
-        payload = safe_path(SOURCE, relative).read_bytes()
-        if sha(payload) != item['new_sha256']:
-            raise ValueError(f'Damaged update payload: {relative}')
+        payload = verified_payload(
+            safe_path(SOURCE, relative).read_bytes(), item, relative)
         target = safe_path(repo, relative)
         if target.exists():
             old = target.read_bytes()
