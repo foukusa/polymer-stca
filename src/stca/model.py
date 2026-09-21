@@ -21,7 +21,7 @@ from .rules import Rule
 from .validation import fraction, feature_names, checked_frame_matrix, target_vector, ensure_direction, positive_int
 
 SCHEMA_VERSION = 1
-PACKAGE_VERSION = "0.1.0rc2"
+PACKAGE_VERSION = "1.0"
 
 
 def tier_key(tier: float) -> str:
@@ -182,6 +182,7 @@ class ScreeningModel:
             cutoff=target_cutoff(y,tier,self._artifact["direction"]); mode=cutoff_mode
         else: raise STCAError("cutoff_mode must be fixed_train or dataset_relative.")
         stored_groups=set(self._artifact.get("training_group_hashes",[]))
+        stored_groups.update(self._artifact.get("selection_group_hashes",[]))
         group_audit="not_available"
         if stored_groups:
             if groups is None:
@@ -198,15 +199,41 @@ class ScreeningModel:
         result.update({"tier":float(tier),"cutoff":float(cutoff),"cutoff_mode":mode,
                        "target_name":self._artifact["target_name"],"target_unit":self._artifact["target_unit"],
                        "rule_name":self.rule_for(tier).name,"group_overlap_audit":group_audit,
-                       "evaluation_role":"external_without_refitting",
+                       "evaluation_role":("selection_data_reassessment" if group_audit=="overlap_allowed" else
+                           "post_selection_unverified_independence" if self.provenance.get("external_labels_used_for_fit") and group_audit=="not_available" else
+                           "external_without_refitting"),
                        "artifact_kind":self.provenance.get("kind")})
         return result
 
     def evaluate_smiles(self,smiles,y,**kwargs) -> dict:
         if self._artifact["feature_spec"]["kind"]!="rdkit_maccs167": raise STCAError("Not a SMILES model.")
         X,audit=maccs_from_smiles(smiles,errors="raise")
-        if "groups" not in kwargs: kwargs["groups"]=audit.canonical_smiles.tolist()
+        if "groups" not in kwargs:
+            if self.provenance.get("group_identity_kind")=="PID":
+                raise STCAError("This fitted reference model stores PID groups, not canonical SMILES. Supply groups=your_PIDs for evaluation; ordinary screen() does not need labels or groups.")
+            kwargs["groups"]=audit.canonical_smiles.tolist()
         return self.evaluate(X,y,**kwargs)
+
+    def new_trainer(self):
+        """Recreate the saved training recipe, not the saved rule or rankings.
+
+        Supply the same labeled data and (for paper models) selection data to
+        reproduce the model. New data can legitimately yield different rules.
+        """
+        from .training import STCA
+        from .scan import ScanConfig
+        from .protocols import TemplateFamily
+        import dataclasses
+        config = self.artifact.get("training_config")
+        if not config or not {"hierarchy", "direction", "tiers"}.issubset(config):
+            raise STCAError("This legacy snapshot has no complete training recipe; use a verified paper or source_locked model.")
+        accepted = {f.name for f in dataclasses.fields(STCA)}
+        if set(config)-accepted:
+            raise STCAError("Unsupported saved training configuration; do not silently discard fields.")
+        config["scan"] = ScanConfig(**config["scan"])
+        if config.get("template_family") is not None:
+            config["template_family"] = TemplateFamily(config["template_family"])
+        return STCA(**config)
 
     def save(self,path,*,overwrite=False): dump_json(path,self._artifact,overwrite=overwrite)
 

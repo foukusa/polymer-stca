@@ -1,33 +1,23 @@
-# GitHub listing text
+# GitHub project information — STCA 1.0
 
-Suggested repository name: `polymer-stca`. The repository has not been created
-by this delivery, and the matching PyPI name has not been reserved.
+Repository: https://github.com/foukusa/polymer-stca
 
-## About
+Local GitHub Desktop checkout: `D:\hongo\polymer-stca`
 
-> Interpretable STCA rule screening for polymer dielectrics, with ready-to-use Tg/EC profiles, custom-data training, transparent rule export and frozen held-out evaluation.
+Description:
 
-## Associated manuscript
+> Interpretable STCA screening of polymer dielectrics with fitted Tg/EC rules, paired custom-data training and reproducible rule verification.
 
-Interpretable Substructure-Based Screening of Multi-Property Polymer Dielectrics with Prompt-Ready Rules for Rational Design
+Topics: `polymer`, `dielectrics`, `stca`, `screening`, `maccs`, `interpretable-machine-learning`, `python`
 
-Journal: npj Computational Materials.
+Release title: **STCA 1.0**
 
-## Topics
+Suggested release note:
 
-```text
-polymer stca cheminformatics rdkit materials-informatics
-substructure-screening dielectrics python interpretable-machine-learning
-```
+> STCA 1.0 provides high-Tg, low-EC and high-EC rule screening, explicit paper/source-locked training protocols, model export, CLI examples and documented real-data parity checks. The same reference inputs and protocol reproduce paired pretrained rules. See the validation report for selection-scope, split-reconstruction and environment limitations. Raw research data are not redistributed.
 
-## Release title
-
-> v0.1.0rc2 — STCA documentation, attribution and packaging preview
-
-## Release summary
-
-> This preview provides a pip-installable STCA core, Python and command-line screening, archived SI-20260822 Tg/EC rule profiles, custom-data training, JSON model export and held-out evaluation. The English documentation includes complete installation and invocation examples. The institutional copyright and academic-peer-review permission terms are included in source and wheel distributions. The bundled rule assets and algorithm are unchanged from rc1; original-data manuscript parity is not newly certified.
-
-Use `README.md` as the English landing page. Do not advertise an open-source
-license, unrestricted academic reuse, DOI, PyPI publication, or passing remote
-CI until the corresponding permission or fact has been established.
+The repository root directly contains `pyproject.toml`, `README.md`, `src/` and
+`tests/`. Do not upload only a ZIP and do not nest another project directory.
+Review local changes in GitHub Desktop, commit them and then push to origin.
+Creating the release/tag `v1.0` does not upload files to PyPI automatically unless
+an authorized publishing workflow has been separately configured.

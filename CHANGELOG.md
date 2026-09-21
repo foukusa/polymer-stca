@@ -1,27 +1,14 @@
-# Changelog
+# STCA 1.0
 
-## 0.1.0rc2 — 2026-09-20
+STCA provides frozen high-Tg, low-EC and high-EC rule screening, paired custom-data
+training protocols, JSON model export, a Python API and a command-line interface.
 
-Expanded the English README with installation, ready-to-use Tg/EC screening,
-CSV and Python usage, custom SMILES/binary training, EC units, evaluation,
-serialization, error handling, and output interpretation. Added a runnable
-synthetic SMILES example and a detailed GitHub/PyPI release guide.
+The package includes six fitted models: the three property/direction tasks under
+the archived `paper` protocol and under the separately defined `source_locked`
+protocol. Same-data, same-protocol parity and its scientific limitations are
+recorded in `docs/VERIFIED_RESULTS.md` and `validation/`.
 
-Added the maintainer-supplied institutional copyright, academic-peer-review
-LICENSE, NOTICE, license metadata, contact, acknowledgments, and full manuscript
-title for npj Computational Materials. Removed the Chinese README and pending
-license notice. No alternative permissive license was substituted.
-
-No discovery, rule-selection or screening logic changed. All three archived JSON
-assets remain byte-for-byte identical to 0.1.0rc1. Publishing remains an explicit,
-rights-reviewed maintainer action, not an automatic consequence of installation.
-
-## 0.1.0rc1 — 2026-09-20
-
-Portable threshold-frequency scanning, signed-prefix discovery, source-only family
-selection and frozen screening; explicit EC reverse-hierarchy mode; three archived
-SI-20260822 profiles spanning eleven tiers; optional RDKit SMILES support; strict
-MACCS/PID validation; custom binary-feature training; JSON models; CLI; local tests;
-GitHub metadata and CI/publishing templates.
-
-Not a public PyPI upload or an end-to-end numerical certification of the manuscript.
+The public distribution version is **1.0** throughout the project metadata,
+runtime version, packaged model metadata, installation examples and citation.
+The source ZIP expands directly into a repository root; it does not contain an
+extra parent project directory.

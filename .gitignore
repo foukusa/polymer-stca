@@ -14,3 +14,10 @@ private_data/
 .pypirc
 *.pem
 *.key
+
+# STCA local/private artifacts
+reviewer_ready_*
+STCA_verified_*/
+STCA_realdata_*/
+PRIVATE_*
+STCA_update_backup_*/

@@ -1,0 +1,29 @@
+{
+  "package_version": "1.0",
+  "status": "PASS_RULE_FAMILY_SCORE_PARITY",
+  "python": "3.13.5 (main, Jul 15 2026, 20:25:40) [GCC 14.2.0]",
+  "platform": "Linux-6.18.44-x86_64-with-glibc2.41",
+  "numpy": "2.3.5",
+  "pandas": "2.2.3",
+  "scipy": "1.17.0",
+  "rdkit": "2025.09.4",
+  "paper_final_rules_matched": 11,
+  "paired_source_locked_rules_matched": 11,
+  "archived_rule_scope_metric_rows_checked": 1251,
+  "archived_rule_scope_metric_rows_matched": 1251,
+  "scope_limitations": [
+    "Not an untouched-test estimate or a new independent performance benchmark: paper selection uses historical extra labels.",
+    "Original raw fingerprint CSVs and their row order are not in these result archives.",
+    "EC split rebuilt from 691 first rows and 172 following rows, independently gated against all 171 archived family/scope metric records.",
+    "Thermal historical precomputed correlation coefficients are not numerically identical to the fresh value-grid scan; used top-10 rankings, families, winners and performance metrics agree.",
+    "Alternative-split, cross-property epsilon/Tm/Td/TC, bootstrap and permutation analyses are not rerun by this core parity check."
+  ],
+  "inference_uses_reference_results": false,
+  "expected_winner_used_during_fit": false,
+  "source_test_count": 148,
+  "installed_wheel_test_count": 148,
+  "repository_layout": "Root directly contains pyproject.toml, src, tests, docs and scripts.",
+  "local_repository": "D:\\hongo\\polymer-stca",
+  "windows_execution": "NOT_EXECUTED_LOCALLY",
+  "new_dependency_resolution": "NOT_EXECUTED_INSTALLED_TESTS_REUSE_LOCAL_SCIENTIFIC_DEPENDENCIES"
+}

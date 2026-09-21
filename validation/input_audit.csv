@@ -1,0 +1,3 @@
+property,n,inter_n,extra_n,unit,split
+Tg,7291,5833,1458,degC,explicit PID labels
+EC,863,691,172,log10(S/cm),"row-order reconstruction, all archived family/scope counts checked"

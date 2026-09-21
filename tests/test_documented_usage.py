@@ -113,7 +113,6 @@ def test_bundled_synthetic_smiles_demo(tmp_path):
     assert len(pd.read_csv(base / "screen.csv")) == 6
 
 
-@pytest.mark.skipif(sys.version_info < (3, 11), reason="Release-only tool requires Python 3.11+")
 def test_release_gate_keeps_unapproved_fixture_blocked(tmp_path):
     _write_gate_fixture(tmp_path)
     missing = _gate().check(tmp_path)
@@ -121,7 +120,6 @@ def test_release_gate_keeps_unapproved_fixture_blocked(tmp_path):
     assert any("public_distribution_authorized" in x for x in missing)
 
 
-@pytest.mark.skipif(sys.version_info < (3, 11), reason="Release-only tool requires Python 3.11+")
 def test_release_gate_accepts_explicit_fixture_not_real_authorization(tmp_path):
     # These values are a temporary software fixture, never a project approval.
     _write_gate_fixture(tmp_path)

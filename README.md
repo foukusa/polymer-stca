@@ -1,46 +1,45 @@
 # STCA: Interpretable Polymer Substructure Screening
 
-**Ready-to-use Tg/EC rules, transparent screening, and STCA training on your own data.**
+**Screen new polymers with frozen Tg/EC rules, or fit the same documented STCA recipe to labeled data.**
 
-This repository accompanies the manuscript:
+Associated manuscript:
 
 > **Interpretable Substructure-Based Screening of Multi-Property Polymer Dielectrics with Prompt-Ready Rules for Rational Design**  
 > **Journal:** npj Computational Materials
 
-Distribution name: **`polymer-stca`** · Python import: **`stca`** · Version: **`0.1.0rc2`**
+Distribution: `polymer-stca` | Import: `stca` | Version: **1.0** | Python: **3.10+**
 
-[Installation](#installation) · [Screening](#ready-to-use-tg-and-ec-screening) · [Custom training](#train-stca-on-your-own-data) · [Command line](#command-line-workflows) · [GitHub and PyPI publishing](docs/RELEASING.md) · [Sources](docs/SOURCES.md) · [License](#license)
+[Installation](#installation) · [Screening](#screen-with-existing-rules) · [Training](#train-with-the-same-protocol) · [Verified results](docs/VERIFIED_RESULTS.md) · [Sources](docs/SOURCES.md) · [Publishing](docs/RELEASING.md) · [License](#license)
 
-## Overview
+## Verified STCA protocols
 
-STCA discovers interpretable, signed substructure rules from changes in feature frequency during a property-threshold scan. A frozen rule can then be applied to new structures **without knowing their measured properties**. Each rule is a conjunction of required-present and required-absent features.
+The author-supplied result archives support an actual structure-to-rule refit. On their recorded Tg-core/EC-core protocol, the package regenerated MACCS fingerprints, refitted STCA, recovered **11/11 historical final rules**, and matched **1,251 archived rule/scope metric records**. Six frozen model artifacts were exported by actual fitting: three `paper` models and three matched `source_locked` models. They include their training recipes and measured training cutoffs, rather than just transcribed winning conditions.
 
-The package provides two separate entry points: load an existing Tg/EC rule profile for immediate screening, or discover a new rule family from your own labeled data. It is not a numerical property regressor. A rule match is not a calibrated probability or an experimental performance guarantee.
+The electrical primary families are bundled as **prefix lengths**, not frozen winning MACCS keys. Low-EC tiers use 6, 6, 6 and 7 candidate templates; high-EC tiers use 8 each. A fit still learns the positive/negative rankings from the supplied source data. The trained rules are not replaced with reference answers.
 
-| Capability | Available in this package |
-|---|---|
-| High glass-transition temperature, Tg | `tg-high`: Top 30%, 20%, 10% |
-| Low electrical conductivity, EC | `ec-low`: Bottom 20%, 15%, 10%, 5% |
-| High electrical conductivity, EC | `ec-high`: Top 20%, 15%, 10%, 5% |
-| Custom-data training | SMILES and numeric targets, or named binary descriptors and numeric targets |
-| Explainable output | Rule signatures, expressions, matched literals, missing required features, forbidden features |
-| Model reuse | JSON save/load, with frozen rules, feature definitions and training cutoffs |
-| Evaluation | TP, FP, TN, FN, MCC, precision, recall, specificity, F1, coverage and enrichment |
-| Interfaces | Python API and `stca` / `python -m stca` command-line interfaces |
+**Meaning of equality:** the same labeled data, structure representation, split, recipe and selection scope reproduce the paired pretrained artifact. Different data, or a different named protocol, need not produce the same rule. `STCA()` remains the generic source-only estimator. `STCA.for_profile()` and `load_pretrained()` default to the same **`paper`** recipe.
 
-**Scope of this preview.** The built-in profiles are the **SI-20260822, Table S17, Tg-core/EC-core** archive recorded in [Sources](docs/SOURCES.md). They are executable rule snapshots, not newly certified final-paper artifacts. Their historical numerical cutoffs are not included. Version 0.1.0rc2 changes documentation, attribution and release tooling; the rule assets and discovery/screening logic are unchanged from rc1. This delivery has not created a GitHub repository or published to PyPI.
-
-The full manuscript title identifies the associated research; this package currently includes Tg and EC profiles, not every property or benchmark discussed in the manuscript. See [Profile scope](docs/PROFILES.md) and [Algorithm](docs/ALGORITHM.md).
+**Scientific scope:** here `paper` specifically identifies the archived **core-scope representative-selection calculation**. It uses historical inter/extra/all labels for selection. Its historical extra result is **not an untouched-test estimate**. The supplementary source-only and alternative-split analyses are not relabeled as this protocol. See the qualifications in [Verified results](docs/VERIFIED_RESULTS.md), including the EC split reconstruction and nonidentical historical thermal correlation coefficients.
 
 ## Installation
 
-Python **3.10 or later** is declared. The current local verification environment and actual executed checks are recorded in [VALIDATION.md](VALIDATION.md); a configured CI matrix is not a claim that all platforms have already passed.
+The source ZIP has **no enclosing project directory**. Its root contains
+`pyproject.toml`, `README.md`, `src/`, `tests/` and `.github/` directly.
+The maintainer's existing GitHub Desktop checkout is `D:\hongo\polymer-stca`.
+Do not create another `polymer-stca/` inside that directory.
 
-All installation and usage examples are subject to [License](#license). Availability of a GitHub URL or a wheel does not extend the permission terms.
+```powershell
+Set-Location "D:\hongo\polymer-stca"
+python -m pip install ".[chem]"
+python -m stca --version
+```
 
-### A. Install from the downloaded project
+The version command reports `1.0`. To update an existing checkout safely, stage
+this ZIP outside the checkout and use `scripts/apply_update.py`; it backs up
+changed files, leaves `.git` and local research data untouched, and refuses
+unrecognized source edits. See [local update instructions](docs/LOCAL_UPDATE.md).
 
-Extract the project ZIP. Open a terminal **inside `STCA_GitHub/`, beside `pyproject.toml`**:
+From any downloaded source copy, enter the folder that directly contains `pyproject.toml`:
 
 ```bash
 python -m pip install ".[chem]"
@@ -48,428 +47,201 @@ python -m stca --version
 python -m stca profiles
 ```
 
-The `chem` extra installs RDKit for SMILES-to-MACCS conversion. For an explicit binary-feature workflow without SMILES, install only the core:
+Or install the supplied wheel and chemistry dependency:
 
 ```bash
-python -m pip install .
+python -m pip install "./polymer_stca-1.0-py3-none-any.whl[chem]"
 ```
 
-For development and tests:
+Only after the corresponding version has actually been published to PyPI:
 
 ```bash
-python -m pip install -e ".[chem,dev]"
-python -m pytest -q
+python -m pip install "polymer-stca[chem]==1.0"
 ```
 
-A virtual environment is recommended. On Windows PowerShell, using its interpreter directly avoids requiring an activation-policy change:
-
-```powershell
-py -3.12 -m venv .venv
-.venv\Scripts\python.exe -m pip install --upgrade pip
-.venv\Scripts\python.exe -m pip install ".[chem]"
-.venv\Scripts\python.exe -m stca profiles
-```
-
-That first command requires Python 3.12 to be installed; choose another installed, supported Python version when appropriate. On Linux/macOS:
+Only after the source has been pushed and tag `v1.0` created on GitHub, installation from that tag is available:
 
 ```bash
-python3 -m venv .venv
-.venv/bin/python -m pip install --upgrade pip
-.venv/bin/python -m pip install ".[chem]"
-.venv/bin/python -m stca profiles
+python -m pip install "polymer-stca[chem] @ https://github.com/foukusa/polymer-stca/archive/refs/tags/v1.0.zip"
 ```
 
-### B. Install the supplied wheel
+This delivery does not itself push a commit, create a tag, grant distribution permission or upload to PyPI. The package supports explicit binary descriptors without RDKit; install `.` without `[chem]` for that workflow. Development tools, including the conditional Python 3.10 `tomli` dependency, are installed with `.[chem,dev]`.
 
-From the directory containing the wheel:
+## Screen with existing rules
 
-```bash
-python -m pip install ./polymer_stca-0.1.0rc2-py3-none-any.whl
-python -m pip install rdkit
-python -m stca --version
-```
-
-The second command is unnecessary for binary-feature-only use. Scientific dependencies must already be available or resolvable by pip; the wheel does not bundle an entire Python environment.
-
-### C. Install directly from GitHub after uploading
-
-Replace `foukusa` and the repository name with the actual ones. The repository must contain this project at its root, and the tag must exist. A working Git executable is required:
-
-```bash
-python -m pip install "polymer-stca[chem] @ git+https://github.com/foukusa/polymer-stca.git@v0.1.0rc2"
-```
-
-This installs from GitHub **without requiring a PyPI release**. An installation pinned to a full commit hash is preferable for exact computational provenance. Private repositories additionally require authorized Git access. See the [official pip VCS documentation](https://pip.pypa.io/en/stable/topics/vcs-support/) and the project's [step-by-step release guide](docs/RELEASING.md).
-
-### D. Install by package name after publishing to PyPI
-
-Only after this exact project has been published under an available, maintainer-controlled name:
-
-```bash
-python -m pip install "polymer-stca[chem]==0.1.0rc2"
-```
-
-For a future stable release, the ordinary command is:
-
-```bash
-python -m pip install "polymer-stca[chem]"
-```
-
-**Uploading files to GitHub does not enable a PyPI name-only install.** The explicit version above selects this prerelease; do not assume a name-only install resolves to this preview. Package-name availability has not been established by this delivery. [Publishing instructions](docs/RELEASING.md) cover both manual upload and GitHub Actions Trusted Publishing.
-
-## Ready-to-use Tg and EC screening
-
-### 1. List profiles and load a model
-
-```python
-from stca import list_profiles, load_pretrained
-
-print(list_profiles().to_string(index=False))
-
-tg = load_pretrained("tg", direction="high")
-ec_low = load_pretrained("ec", direction="low")
-ec_high = load_pretrained("ec", direction="high")
-
-# Equivalent explicit profile names:
-tg = load_pretrained("tg-high")
-
-print(tg.tiers)
-print(tg.rules(tier=0.20).to_string(index=False))
-print(tg.provenance)
-```
-
-The `ArchivedProfileWarning` is intentional: it identifies the rule snapshot's status, not a failure to load. `load_pretrained("tg-high", warn=False)` suppresses that display but does not change provenance or validation status.
-
-### 2. Screen a list of SMILES
+No training data, measured candidate properties, original core scripts or `morgen` files are needed. Screening only generates candidate fingerprints and applies the already frozen conjunction.
 
 ```python
 from stca import load_pretrained
 
-# Syntax examples only, not verified high-performance polymer recommendations.
-smiles = ["*CC*", "*CCO*", "*c1ccc(cc1)*"]
-
+smiles = ["*CC*", "*CCO*", "*c1ccc(cc1)*"]  # Format examples, not validated designs.
 model = load_pretrained("tg-high")
 result = model.screen(smiles, tier=0.20)
-
-print(result[
-    ["smiles", "input_valid", "selected", "rule_name",
-     "missing_required_present", "unexpected_present"]
-].to_string(index=False))
-```
-
-SMILES are interpreted **as supplied**: `*` connection atoms are retained, not hydrogen-capped. Salt removal, tautomer normalization, oligomer construction and other chemical standardization are not performed automatically. Apply a documented, consistent representation policy during training and screening.
-
-`tier=0.20` refers to the profile's original top/bottom target fraction; it does **not** force exactly 20% of a new candidate list to pass. Some archived tiers share the same Boolean rule and therefore return identical masks. Unsupported tiers are rejected rather than interpolated.
-
-### 3. Screen a CSV and retain identifiers
-
-Input `candidates.csv` needs a SMILES column; IDs are optional:
-
-```csv
-ID,SMILES
-candidate_1,*CC*
-candidate_2,*CCO*
-candidate_3,*c1ccc(cc1)*
-```
-
-```python
-from pathlib import Path
-import pandas as pd
-from stca import load_pretrained
-
-candidates = pd.read_csv("candidates.csv").reset_index(drop=True)
-model = load_pretrained("ec-low")
-result = model.screen(candidates["SMILES"], tier=0.10)
-
-# Positional alignment is explicit; model output does not carry arbitrary IDs.
-result.insert(0, "ID", candidates["ID"].to_numpy())
-Path("runs").mkdir(exist_ok=True)
-result.to_csv("runs/low_ec_screen.csv", index=False)
-selected = result.loc[result["selected"].fillna(False)].copy()
-selected.to_csv("runs/low_ec_selected.csv", index=False)
-```
-
-The command-line equivalent preserves **all** original CSV columns:
-
-```bash
-stca screen --profile ec-low --tier 0.10 --input candidates.csv --output runs/low_ec_screen.csv
-```
-
-### 4. Interpret the output
-
-| Output field | Meaning |
-|---|---|
-| `row_position` | Zero-based input row position, not a user-supplied identifier |
-| `input_valid` | Whether the structure could be parsed and fingerprinted |
-| `selected` | All required-present and required-absent literals match |
-| `rule_name`, `rule_signature` | Exact frozen rule used for the decision |
-| `matched_literals`, `required_literals` | Counts explaining rule satisfaction; not confidence scores |
-| `missing_required_present` | Required-present features that are absent |
-| `unexpected_present` | Features present despite a required-absent condition |
-| `tier`, `target_direction` | Target fraction and high/low screening direction |
-| `profile_kind` | Archived profile or custom source-trained model provenance |
-
-`model.rules(tier=...)` exposes readable Boolean expressions. For MACCS, identifiers such as `K142` are key indices, not atom numbers. The complete fingerprint has 167 positions, with dummy bit 0 and actual keys 1–166. Arbitrary 166-/167-column input is not guessed or silently shifted.
-
-By default, invalid SMILES stop processing. To retain invalid rows without assigning a false decision:
-
-```python
-result = model.screen(["*CC*", "not_a_smiles"], tier=0.10, errors="report")
-print(result[["input_valid", "selected", "input_error"]])
-```
-
-The invalid row has `selected=<NA>`, not `False`. Its parse error is reported. CLI users can pass `--errors report`.
-
-### 5. Combine two rule matches explicitly
-
-```python
-from stca import load_pretrained
-
-smiles = ["*CC*", "*CCO*", "*c1ccc(cc1)*"]
-tg_result = load_pretrained("tg-high").screen(smiles, tier=0.20)
-ec_result = load_pretrained("ec-low").screen(smiles, tier=0.10)
-joint_match = tg_result["selected"] & ec_result["selected"]
-print(joint_match)
-```
-
-This AND operation is a user-defined intersection of two independent rule masks. It is **not** a separately trained or experimentally validated multi-property performance claim.
-
-## Train STCA on your own data
-
-### Data requirements
-
-For SMILES training, each record needs a valid structure and a finite numeric target. A Tg CSV could have `ID,SMILES,Tg`; an EC CSV could have `ID,SMILES,EC`. Units and measurement conditions must be defined consistently. Missing labels, nonnumeric targets, invalid structures and nonpositive raw conductivities are rejected rather than silently repaired.
-
-Use a source/training set to discover and select rules, and a disjoint test set for evaluation. `fit_smiles` records canonical structure identities, and `evaluate_smiles` checks overlap. The CLI also audits a declared `split` and optional group column. This audit does not itself create a chemical-extrapolation split.
-
-### 1. Train high-Tg rules from SMILES
-
-This example uses your actual files `my_tg_train.csv` and `my_tg_test.csv`; they are not bundled measurement datasets:
-
-```python
-from pathlib import Path
-import pandas as pd
-from stca import STCA, ScanConfig
-
-train = pd.read_csv("my_tg_train.csv")
-test = pd.read_csv("my_tg_test.csv")
-output = Path("runs/my_tg")
-
-trainer = STCA(
-    direction="high",
-    tiers=(0.30, 0.20, 0.10),
-    scan=ScanConfig(mode="value", step=1.0),
-    max_rank=10,
-    family_size=8,
-    target_name="Tg",
-    target_unit="degC",
-)
-model = trainer.fit_smiles(
-    train["SMILES"],
-    train["Tg"],
-    provenance={"dataset_description": "User-supplied Tg training data"},
-)
-
-model.save(output / "model.json")
-trainer.export_diagnostics(output)
-model.rules(tier=0.20).to_csv(output / "rules_top20.csv", index=False)
-
-metrics = model.evaluate_smiles(
-    test["SMILES"], test["Tg"], tier=0.20,
-)
-print(pd.Series(metrics).to_string())
-```
-
-`step=1.0` is an explicit custom-training value in degrees Celsius, not a claim about every historical Tg calculation. Choose a step appropriate to your target. `mode="unique"` and `mode="quantile"` are alternative scans with different threshold weighting, not interchangeable numerical replicas.
-
-`fit` and `fit_smiles` return a **`ScreeningModel`**, not the trainer. The fitted model is also accessible as `trainer.model_`. No test labels enter rule discovery or representative selection.
-
-### 2. Train low- or high-EC rules with explicit units
-
-EC is stored internally as `log10(S/cm)`. Supported input declarations are `S/m`, `S/cm`, `log10(S/m)` and `log10(S/cm)`; the unit is never guessed.
-
-```python
-import pandas as pd
-from stca import STCA, ScanConfig, ec_to_log10_s_cm
-
-train = pd.read_csv("my_ec_train.csv")
-test = pd.read_csv("my_ec_test.csv")
-
-# This example assumes raw EC values in S/m in both input files.
-y_train = ec_to_log10_s_cm(train["EC"], unit="S/m")
-y_test = ec_to_log10_s_cm(test["EC"], unit="S/m")
-
-trainer = STCA(
-    direction="low",                # Use "high" to screen the high-EC tail.
-    hierarchy="ec_reverse",         # Explicit archived electrical convention.
-    tiers=(0.20, 0.15, 0.10, 0.05),
-    scan=ScanConfig(mode="value", step=0.01),
-    max_rank=35,
-    mcc_mode="nonnegative",
-    target_name="EC",
-    target_unit="log10(S/cm)",
-)
-model = trainer.fit_smiles(train["SMILES"], y_train)
-model.save("runs/my_ec/model.json")
-trainer.export_diagnostics("runs/my_ec")
-
-metrics = model.evaluate_smiles(test["SMILES"], y_test, tier=0.10)
-print(pd.Series(metrics).to_string())
-```
-
-The `ec_reverse` option scans the low-EC hierarchy first; high-EC use swaps its signed roles once. It requires eligible features of both signs. For a different, intentionally generic custom protocol, `hierarchy="direct"` is available; changing that setting changes the discovery protocol.
-
-Already-logarithmic targets must be declared as such. For example, `ec_to_log10_s_cm(values, unit="log10(S/m)")` performs the unit offset without taking a second logarithm.
-
-### 3. Save, reload and screen without retraining
-
-```python
-import pandas as pd
-from stca import ScreeningModel
-
-model = ScreeningModel.load("runs/my_tg/model.json")
-candidates = pd.read_csv("candidates.csv")
-result = model.screen(candidates["SMILES"], tier=0.20)
-result.to_csv("runs/my_tg/new_candidates.csv", index=False)
+print(result[["smiles", "input_valid", "selected", "rule_name",
+              "missing_required_present", "unexpected_present"]])
 print(model.rules(tier=0.20))
 ```
 
-`save` refuses to overwrite an existing JSON unless `overwrite=True` is explicit. CLI commands similarly require `--overwrite`. JSON loading validates the schema and rule indices; it does not use pickle or execute rule strings.
+The same interface accepts `ec-low` and `ec-high`. High Tg supports Top 30%, 20%, 10%; low/high EC support Bottom/Top 20%, 15%, 10%, 5%. A tier identifies a target regime; it does **not** require selecting exactly that percentage of every candidate pool. EC tiers can share an identical frozen rule. `selected` is a structural match, **not** a numerical property prediction, probability, or guarantee of experimental performance.
 
-### 4. Train on custom binary descriptors
+For a CSV with `ID,SMILES`:
 
-Your features may be explicit binary descriptors instead of MACCS. This interface requires 0/1 values, not raw continuous variables:
+```bash
+python -m stca screen --profile tg-high --tier 0.20 --input candidates.csv --output tg_screen.csv
+python -m stca screen --profile ec-low --tier 0.10 --input candidates.csv --output ec_low_screen.csv
+python -m stca screen --profile ec-high --tier 0.10 --input candidates.csv --output ec_high_screen.csv
+```
+
+Input ID columns are retained. Invalid SMILES raise an error by default; `--errors report` retains them as invalid with an unknown selection status, not a false all-zero fingerprint.
 
 ```python
 import pandas as pd
-from stca import STCA, ScanConfig
-
-train = pd.read_csv("binary_train.csv")
-test = pd.read_csv("binary_test.csv")
-features = ["feature_a", "feature_b", "feature_c"]
-
-trainer = STCA(
-    direction="high",
-    tiers=(0.20,),
-    scan=ScanConfig(step=0.25),
-    target_name="custom_property",
-    target_unit="user_defined_unit",
-)
-model = trainer.fit(
-    train[features], train["target"], groups=train["group_id"],
-)
-result = model.screen_fingerprints(test[features], tier=0.20)
-metrics = model.evaluate(
-    test[features], test["target"], tier=0.20, groups=test["group_id"],
-)
-model.save("runs/custom_binary/model.json")
-print(metrics)
-```
-
-Named DataFrames are aligned to the saved feature names. Arrays must already follow the saved column order. Define any continuous-to-binary transformations using training data only, and freeze them before test or candidate processing. Supplying composite descriptors does not imply this package is a validated C-STCA release.
-
-### 5. Run complete bundled demonstrations
-
-These commands require no private research dataset:
-
-```bash
-python examples/screen_profiles.py
-python examples/train_binary_demo.py
-python examples/train_smiles_demo.py
-```
-
-The two training demos use **explicitly synthetic targets**, not measured Tg/EC values or manuscript benchmark data. They demonstrate fitting, diagnostic export, saving, reloading and disjoint evaluation. The SMILES demo also writes synthetic CSVs under `runs/synthetic_smiles/` for trying the CLI:
-
-```bash
-stca train --input runs/synthetic_smiles/data.csv --target synthetic_target --target-name SYNTHETIC_demo --target-unit arbitrary --tiers 0.20 --scan-step 0.25 --split-column split --output-dir runs/synthetic_smiles_cli
-```
-
-### 6. Training diagnostics and evaluation semantics
-
-`trainer.export_diagnostics(...)` writes `scan_correlations.csv`, `scan_thresholds.csv` and `candidate_rules.csv`. The candidate table includes source metrics, membership in the retained family and the frozen representative flag. `model.rules(...)` returns each saved tier's family; CLI training additionally writes per-tier rule CSVs, split membership and test metrics when a test split is supplied.
-
-Custom training ranks candidates by source F1, retains a family with available signed-family anchors, and selects a valid representative by source `AS = (MCC + precision + F1) / 3`. The representative is not reselected using the test set. A tier with no valid source rule is stored as abstention and raises `NoValidRuleError` when screening is requested; it is not silently relaxed.
-
-Default evaluation uses the **saved training cutoff**. Positive labels include ties at that cutoff. `cutoff_mode="dataset_relative"` deliberately recomputes a target cutoff from the labeled evaluation set and is a different evaluation definition; it is not the default deployment estimate.
-
-Archived profiles have no verified historical numerical cutoff. To evaluate one, supply a justified explicit cutoff in the stored units, or explicitly choose dataset-relative evaluation:
-
-```python
 from stca import load_pretrained
 
-archive = load_pretrained("tg-high")
-# Requires your labeled, independent evaluation DataFrame named test.
-metrics = archive.evaluate_smiles(
-    test["SMILES"], test["Tg"], tier=0.20,
-    cutoff_mode="dataset_relative",
+candidates = pd.read_csv("candidates.csv")
+tg = load_pretrained("tg-high").screen(candidates["SMILES"], tier=0.20)
+ec = load_pretrained("ec-low").screen(candidates["SMILES"], tier=0.10)
+tg.insert(0, "ID", candidates["ID"].to_numpy())
+tg["also_matches_low_ec"] = tg["selected"] & ec["selected"]
+tg.to_csv("joint_screen.csv", index=False)
+```
+
+A joint match combines two structural conditions; it is not a separately validated joint-property model.
+
+## Train with the same protocol
+
+### A. Exact archived core-recipe reconstruction
+
+The simplest way to avoid a recipe mismatch is `pretrained.new_trainer()`. It reads the stored training configuration **only**, never the saved winner, fitted rankings or reference scores.
+
+The following example expects two real CSVs with `PID,SMILES,EC`. The EC values must already be `log10(S/cm)`:
+
+```python
+import pandas as pd
+from stca import load_pretrained, SelectionData
+from stca.chemistry import maccs_from_smiles, MACCS_NAMES, MACCS_SPEC
+
+source = pd.read_csv("ec_source.csv")
+selection = pd.read_csv("ec_selection.csv")
+X, _ = maccs_from_smiles(source["SMILES"])
+Xs, _ = maccs_from_smiles(selection["SMILES"])
+
+pretrained = load_pretrained("ec-low", protocol="paper")
+trainer = pretrained.new_trainer()
+custom = trainer.fit(
+    X, source["EC"].to_numpy(),
+    feature_names_=MACCS_NAMES,
+    feature_spec=MACCS_SPEC,
+    groups=source["PID"].astype(str).to_numpy(),
+    selection_data=SelectionData(
+        Xs, selection["EC"].to_numpy(),
+        selection["PID"].astype(str).to_numpy(),
+        name="explicit_selection_data",
+    ),
+    acknowledge_selection_labels=True,
 )
+custom.save("custom_ec_paper.json")
+trainer.export_diagnostics("ec_paper_diagnostics")
 ```
 
-This does not recover a missing historical cutoff or establish original-paper numerical parity.
+The selection CSV is **used to choose the representative rule**. Do not call it an untouched final test set. An omitted selection set or missing acknowledgement causes an explicit error; the package does not silently change protocols. High Tg and high EC use the same recipe API with their own profiles.
 
-## Command-line workflows
+For original conductivity in S/m rather than log10(S/cm), first apply the explicit conversion to both source and selection labels:
 
-Every command below also works as `python -m stca ...`, which is useful when the `stca` executable is not on PATH.
+```python
+from stca import ec_to_log10_s_cm
+source["EC"] = ec_to_log10_s_cm(source["EC"], unit="S/m")
+selection["EC"] = ec_to_log10_s_cm(selection["EC"], unit="S/m")
+```
 
-### Ready-to-use screening and inspection
+Equivalent one-command training:
 
 ```bash
-stca profiles
-stca inspect --profile tg-high
-stca screen --profile tg-high --tier 0.20 --input candidates.csv --output runs/tg_screen.csv
-stca screen --profile ec-low --tier 0.10 --input candidates.csv --output runs/ec_low_screen.csv
-stca screen --profile ec-high --tier 0.05 --input candidates.csv --output runs/ec_high_screen.csv
+python -m stca train-profile --profile ec-low --protocol paper --input ec_source.csv --selection-input ec_selection.csv --target EC --ec-input-unit "log10(S/cm)" --group-column PID --acknowledge-selection-labels --output-dir ec_paper_fit
 ```
 
-### Custom Tg training, screening and evaluation
+This command automatically applies the verified scan step, reverse-scan convention and bundled candidate-family recipe; users do not select a core script or manually enter the prefix lengths.
 
-`my_tg_data.csv` must contain `SMILES,Tg,split`, with both `train` and `test` rows and no other split labels. Canonical structures must not cross the split:
+### B. Source-only training for a separate deployment evaluation
+
+Choose `source_locked` **on both sides** when no external selection labels should enter fitting:
+
+```python
+import pandas as pd
+from stca import STCA, load_pretrained
+
+source = pd.read_csv("tg_source.csv")
+trainer = STCA.for_profile("tg-high", protocol="source_locked")
+custom = trainer.fit_smiles(source["SMILES"], source["Tg"])
+custom.save("custom_tg_source_only.json")
+
+paired_reference = load_pretrained("tg-high", protocol="source_locked")
+```
 
 ```bash
-stca train --input my_tg_data.csv --target Tg --target-name Tg --target-unit degC --direction high --tiers 0.30 0.20 0.10 --scan-step 1.0 --split-column split --output-dir runs/custom_tg
-stca inspect --model runs/custom_tg/model.json
-stca screen --model runs/custom_tg/model.json --tier 0.20 --input candidates.csv --output runs/custom_tg_candidates.csv
-stca evaluate --model runs/custom_tg/model.json --input my_tg_test.csv --target Tg --tier 0.20 --output runs/custom_tg_evaluation.json
+python -m stca train-profile --profile ec-low --protocol source_locked --input ec_source.csv --target EC --ec-input-unit "log10(S/cm)" --output-dir ec_source_fit
 ```
 
-### Custom EC training and evaluation
+This source-only reference is **not the archived core winner**, and no claim is made that it improves held-out accuracy. It exists so source-only and core-scope results cannot be accidentally compared as though they came from the same selection protocol. For arbitrary custom binary descriptors or unrestricted source-only families, use `STCA(...)` or `train-profile --protocol generic`.
 
-Here `EC` contains raw values in `S/m`:
+### C. Binary descriptors and frozen reuse
+
+```python
+import pandas as pd
+from stca import STCA, ScanConfig, ScreeningModel
+
+train = pd.read_csv("binary_train.csv")
+features = ["feature_a", "feature_b", "feature_c"]
+trainer = STCA(direction="high", tiers=(0.20,),
+               scan=ScanConfig(step=0.25), max_rank=3)
+model = trainer.fit(train[features], train["target"])
+model.save("binary_model.json")
+
+model = ScreeningModel.load("binary_model.json")
+new_data = pd.read_csv("binary_candidates.csv")
+print(model.screen_fingerprints(new_data[features], tier=0.20))
+```
+
+Features must be explicit 0/1 columns. The package does not silently bin continuous variables. Different data can produce different rankings, rules, or an explicit no-valid-rule abstention.
+
+## Evaluate without training again
 
 ```bash
-stca train --input my_ec_data.csv --target EC --ec-input-unit "S/m" --target-name EC --target-unit "log10(S/cm)" --direction low --hierarchy ec_reverse --tiers 0.20 0.15 0.10 0.05 --scan-step 0.01 --max-rank 35 --mcc-mode nonnegative --split-column split --output-dir runs/custom_ec
-stca evaluate --model runs/custom_ec/model.json --input my_ec_test.csv --target EC --ec-input-unit "S/m" --tier 0.10 --output runs/custom_ec_evaluation.json
+python -m stca evaluate --model ec_paper_fit/model.json --input untouched_test.csv --target EC --ec-input-unit "log10(S/cm)" --group-column PID --tier 0.20 --output test_metrics.json
 ```
 
-### Explicit binary columns
+`fixed_train` uses the numeric cutoff stored at fit time. `dataset_relative` defines labels by each evaluation set's own percentile; it is not interchangeable with a fixed-threshold claim. Paper core scores use the latter for inter, extra and all.
+
+The verified pretrained artifacts store PID hashes for overlap checks. When evaluating these artifacts, supply matching PID identities through `groups=...` or `--group-column PID`; canonical SMILES must not be silently compared to PID hashes. Evaluating known source/selection records requires explicit `allow_overlap=True` / `--allow-overlap` and is reported as retrospective reassessment. Ordinary unlabeled `screen()` needs neither PID nor measured targets.
+
+Use disjoint structural/material groups for a new independent generalization study. PID disjointness alone is not proof of molecular disjointness or literature-source independence.
+
+## Reproduce the supplied research results
+
+Place the five author-supplied ZIPs together in a **private directory outside the repository**. Then run:
 
 ```bash
-stca train --input binary_data.csv --features feature_a,feature_b,feature_c --target target --target-name custom_property --target-unit arbitrary --tiers 0.20 --scan-step 0.25 --split-column split --group-column group_id --output-dir runs/custom_binary_cli
-stca screen --model runs/custom_binary_cli/model.json --features feature_a,feature_b,feature_c --input binary_candidates.csv --tier 0.20 --output runs/binary_screen.csv
+python -m stca verify-results --reference-dir "D:/hongo/STCA_reference_archives" --output "D:/hongo/STCA_verified_1.0"
 ```
 
-Use `--smiles-column` for a different structure-column name, `--group-column` for an additional split audit, and `--errors report` for invalid-row reporting during SMILES screening. Run `stca train --help`, `stca screen --help` or `stca evaluate --help` for the implemented options. Without `--split-column`, all input rows are training records and **no held-out evaluation is performed**.
+No core script, manual scan parameters or original `morgen` files are needed for this check. It reads the actual structure/property tables and reference family tables in the supplied output archives, regenerates MACCS, fits six models, refits them again from saved recipes, and compares the fitted outputs. It also checks 1,251 archived rule/scope metric rows independently.
 
-## Repository and source attribution
+`final_rule_parity.csv` records the 11 paper and 11 paired source-only tier checks. `archived_rule_metric_parity.csv`, `candidate_family_parity.csv`, `scan_reference_audit.csv`, `recipe_roundtrip.csv` and `status.json` expose the individual checks and limitations. `PRIVATE_per_material_predictions.csv` includes source record IDs and must **not** be committed to a public repository. This is a core-parity test, not a rerun of every supplementary bootstrap, alternative split or cross-property analysis.
 
-```text
-pyproject.toml             Package metadata, dependencies and entry point
-README.md                  English usage guide
-LICENSE / NOTICE           Copyright, permission terms and attribution
-CITATION.md                Associated manuscript title and citation status
-src/stca/                  STCA implementation and three archived rule assets
-examples/                  Runnable screening and synthetic training demos
-tests/                     Core, CLI and documentation/release checks
-docs/                      API, algorithm, source map, profiles and publishing
-scripts/                   Legacy adapter and public-release metadata check
-.github/workflows/         CI and an inactive PyPI publishing template
+`python -m stca paper-audit` is a much smaller **static** check of the legacy SI literals. It does not execute the real-data refit; it should not be presented as new numerical evidence.
+
+## Development and publication
+
+```bash
+python -m pip install ".[chem,dev]"
+python -m pytest -q
+python -m build
+python -m twine check --strict dist/*
 ```
 
-The scientific implementation is based on the documented thermal and electrical STCA workflows listed in [docs/SOURCES.md](docs/SOURCES.md). The ready-to-use rules are transcribed core-scope SI-20260822 literals. No original measurement database, manuscript, figure set, private credentials or original full research driver is bundled.
+See [VALIDATION.md](VALIDATION.md) for executed environments and checks, and [RELEASING.md](docs/RELEASING.md) for TestPyPI/PyPI instructions. A CI configuration is not a claim that the corresponding remote job has passed. No raw scientific inputs are needed or bundled for public CI.
 
-This is portable implementation code, not a claim of a byte-for-byte original-workflow port. The numerical scope of [VALIDATION.md](VALIDATION.md) must remain distinct from the scientific provenance of [docs/PROFILES.md](docs/PROFILES.md). All three archived JSON files are retained unchanged from rc1; their internal `package_version` records that original import version.
-
-Please cite the associated manuscript using its verified bibliographic record when available, and record the software version and actual repository commit used. [CITATION.md](CITATION.md) gives the supplied manuscript title without inventing a publication date, DOI or author list. Citation does not replace permission required by the license.
+The small synthetic examples in `examples/train_binary_demo.py` and `examples/train_smiles_demo.py` test software behavior only. They are not the real measurements used for the documented scientific refit.
 
 ## License
 

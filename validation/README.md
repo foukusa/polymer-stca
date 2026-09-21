@@ -1,0 +1,1 @@
+Aggregate artifacts from the documented research-data refit. No original measurement rows, SMILES, raw archives or per-record prediction tables are included. See ../docs/VERIFIED_RESULTS.md for scope and limitations.

@@ -19,3 +19,9 @@ __all__ = ["STCA","ScanConfig","ScreeningModel","Rule","load_pretrained","list_p
            "strict_harmonic","grouped_holdout","load_legacy_pair","fingerprints_from_strings",
            "ec_to_log10_s_cm","import_legacy_rule","rule_from_signature",
            "STCAError","NoValidRuleError","ArchivedProfileWarning"]
+
+from .protocols import SelectionData, TemplateFamily
+__all__ += ["SelectionData", "TemplateFamily"]
+
+from .protocols import bundled_primary_family
+__all__ += ["bundled_primary_family"]

@@ -1,9 +1,11 @@
-include README.md LICENSE NOTICE CITATION.md CHANGELOG.md VALIDATION.md .gitignore
+include README.md LICENSE NOTICE CITATION.md CHANGELOG.md VALIDATION.md .gitignore .gitattributes
 recursive-include docs *.md *.template
 recursive-include examples *.py *.csv
 recursive-include tests *.py
-recursive-include scripts *.py
+recursive-include scripts *.py *.json
 recursive-include src/stca/assets *.json
 recursive-include .github *.yml *.example
 
 recursive-include docs *.example
+
+recursive-include validation *.csv *.md *.json

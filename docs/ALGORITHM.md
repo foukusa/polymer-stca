@@ -1,3 +1,5 @@
+> STCA task presets pair with fitted pretrained models. For the exact family/selection protocols and numerical refit scope, see [PROTOCOL_USAGE.md](PROTOCOL_USAGE.md) and [VERIFIED_RESULTS.md](VERIFIED_RESULTS.md). Generic source-only discovery below is not interchangeable with the archived core-scope representative selection.
+
 # Computational protocol
 
 ## Threshold-frequency analysis

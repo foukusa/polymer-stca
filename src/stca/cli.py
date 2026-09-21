@@ -68,15 +68,35 @@ def _target_options(p):
 
 
 def make_parser():
-    p=argparse.ArgumentParser(prog='stca',description='STCA frozen rule screening and source-only custom training')
+    p=argparse.ArgumentParser(prog='stca',description='STCA frozen rule screening and explicit-protocol custom training')
     p.add_argument('--version',action='version',version=PACKAGE_VERSION)
     subs=p.add_subparsers(dest='command',required=True)
-    subs.add_parser('profiles',help='List archived rule snapshots and exact signatures.')
+    profiles=subs.add_parser('profiles',help='List paired frozen rule profiles and exact signatures.')
+    profiles.add_argument('--protocol',choices=['paper','source_locked','legacy_snapshot'],default='paper')
+    a=subs.add_parser('paper-audit',help='Check archived rule literals against a separately recorded SI reference; not a numerical refit.')
+    a.add_argument('--output')
+    a.add_argument('--overwrite',action='store_true')
+    f=subs.add_parser('import-family',help='Import a complete resolved primary EC family; no score-based row selection.')
+    f.add_argument('--input',required=True);f.add_argument('--profile',required=True,choices=['ec-low','ec-high'])
+    f.add_argument('--output',required=True);f.add_argument('--overwrite',action='store_true')
+    q=subs.add_parser('train-profile',help='Train using the same named protocol as the paired pretrained profile.')
+    _common_inputs(q);_target_options(q)
+    q.add_argument('--profile',required=True,choices=['tg-high','ec-low','ec-high'])
+    q.add_argument('--tg-unit',choices=['degC','K'],default='degC')
+    q.add_argument('--protocol',choices=['paper','source_locked','generic'],default='paper')
+    q.add_argument('--selection-input',help='Additional labeled selection CSV required by the paper core protocol; NOT an untouched test set.')
+    q.add_argument('--acknowledge-selection-labels',action='store_true')
+    q.add_argument('--group-column',help='Explicit record/group ID column; default SMILES grouping uses canonical structure.')
+    q.add_argument('--output-dir',required=True);q.add_argument('--overwrite',action='store_true')
+    v=subs.add_parser('verify-results',help='Freshly retrain from author output ZIPs and audit rules/metrics; no legacy core scripts needed.')
+    v.add_argument('--reference-dir',required=True);v.add_argument('--output',required=True)
     show=subs.add_parser('inspect',help='Show model provenance and rule metadata.')
+    show.add_argument('--protocol',choices=['paper','source_locked','legacy_snapshot'],default='paper')
     g=show.add_mutually_exclusive_group(required=True);g.add_argument('--profile');g.add_argument('--model')
     s=subs.add_parser('screen',help='Screen unlabeled candidates; invalid SMILES never become negative-key matches.')
     _common_inputs(s)
     g=s.add_mutually_exclusive_group(required=True);g.add_argument('--profile');g.add_argument('--model')
+    s.add_argument('--protocol',choices=['paper','source_locked','legacy_snapshot'],default='paper')
     s.add_argument('--tier',type=float,default=.2);s.add_argument('--output',required=True)
     s.add_argument('--errors',choices=['raise','report'],default='raise')
     s.add_argument('--overwrite',action='store_true')
@@ -97,6 +117,8 @@ def make_parser():
     e=subs.add_parser('evaluate',help='Evaluate a frozen model without reranking its rules.')
     _common_inputs(e);_target_options(e)
     g=e.add_mutually_exclusive_group(required=True);g.add_argument('--model');g.add_argument('--profile')
+    e.add_argument('--protocol',choices=['paper','source_locked','legacy_snapshot'],default='paper')
+    e.add_argument('--allow-overlap',action='store_true',help='Explicit retrospective reassessment on known training/selection IDs.')
     e.add_argument('--tier',type=float,default=.2);e.add_argument('--output',required=True)
     e.add_argument('--cutoff-mode',choices=['fixed_train','dataset_relative'],default='fixed_train')
     e.add_argument('--cutoff',type=float);e.add_argument('--group-column')
@@ -105,7 +127,7 @@ def make_parser():
 
 
 def _load(args):
-    return load_pretrained(args.profile) if args.profile else ScreeningModel.load(args.model)
+    return load_pretrained(args.profile,protocol=args.protocol) if args.profile else ScreeningModel.load(args.model)
 
 
 def _run_train(args):
@@ -163,12 +185,68 @@ def _run_train(args):
     print('Rules, scan diagnostics and membership saved. '+('Held-out metrics saved without refitting.' if len(test) else 'No held-out evaluation was performed.'))
 
 
+def _run_train_profile(args):
+    from .protocols import SelectionData
+    root=Path(args.output_dir)
+    if root.exists() and any(root.iterdir()) and not args.overwrite:
+        raise FileExistsError(f"Output directory not empty: {root}")
+    if args.profile.startswith('ec-') and args.ec_input_unit is None:
+        raise STCAError("EC training requires --ec-input-unit. Units are never inferred.")
+    if args.profile=='tg-high' and args.ec_input_unit:
+        raise STCAError("EC units cannot be supplied for a Tg task.")
+    if args.protocol=='paper' and (not args.selection_input or not args.acknowledge_selection_labels):
+        raise STCAError("The paper protocol requires --selection-input and --acknowledge-selection-labels. These labels select the representative. For source-only training use --protocol source_locked (paired with the source_locked pretrained model).")
+    if args.protocol!='paper' and (args.selection_input or args.acknowledge_selection_labels):
+        raise STCAError("Source-only protocols refuse selection labels.")
+    frame=_csv(args.input);X,kw,groups=_features(frame,args);y=_targets(frame,args)
+    if args.group_column:
+        if args.group_column not in frame: raise STCAError('Group column missing.')
+        groups=frame[args.group_column].astype(str).to_numpy()
+    if args.profile=='tg-high' and args.tg_unit=='K': y=y-273.15
+    selection=None
+    if args.selection_input:
+        other=_csv(args.selection_input);E,ekw,eg=_features(other,args);ey=_targets(other,args)
+        if kw!=ekw: raise STCAError('Source and selection feature definitions differ.')
+        if args.group_column:
+            if args.group_column not in other: raise STCAError('Selection group column missing.')
+            eg=other[args.group_column].astype(str).to_numpy()
+        if groups is None or eg is None: raise STCAError('Binary source/selection training requires --group-column.')
+        if args.profile=='tg-high' and args.tg_unit=='K': ey=ey-273.15
+        selection=SelectionData(E,ey,eg,name='explicit_selection_csv')
+    trainer=STCA.for_profile(args.profile,protocol=args.protocol)
+    model=trainer.fit(X,y,groups=groups,selection_data=selection,
+                     acknowledge_selection_labels=args.acknowledge_selection_labels,**kw)
+    root.mkdir(parents=True,exist_ok=True)
+    model.save(root/'model.json',overwrite=args.overwrite)
+    trainer.export_diagnostics(root,overwrite=args.overwrite)
+    print(f"Saved {args.profile}, protocol={args.protocol}: {root/'model.json'}")
+    print("Selection labels were used; evaluate on a different untouched test set." if selection else
+          "Source-only training; no test labels were used.")
+
+
 def main(argv=None) -> int:
     args=make_parser().parse_args(argv)
     try:
-        if args.command=='profiles': print(list_profiles().to_string(index=False));return 0
+        if args.command=='profiles': print(list_profiles(protocol=args.protocol).to_string(index=False));return 0
+        if args.command=='verify-results':
+            from .verified import run
+            run(args.reference_dir,args.output);return 0
         if args.command=='inspect': print(json.dumps(_load(args).artifact,indent=2));return 0
         if args.command=='train': _run_train(args);return 0
+        if args.command=='train-profile': _run_train_profile(args);return 0
+        if args.command=='paper-audit':
+            from .paper_audit import audit_bundled_rules
+            table=audit_bundled_rules()
+            print(table[['profile','tier','literal_status','snapshot_bytes_status','reported_pipeline_CA_rounded']].to_string(index=False))
+            print("This invocation checks bundled literals only. Release real-data refit evidence is in assets/verified_refit_summary.json. Run verify-results to repeat the refit locally.")
+            if args.output: table.to_csv(_out(args.output,args.overwrite),index=False)
+            return 0 if table.literal_status.eq('MATCH').all() and table.snapshot_bytes_status.eq('UNCHANGED').all() else 2
+        if args.command=='import-family':
+            from .protocols import TemplateFamily
+            family=TemplateFamily.from_primary_csv(args.input,profile=args.profile)
+            family.save(_out(args.output,args.overwrite),overwrite=args.overwrite)
+            print(f"Saved complete resolved family: {args.output}; source provenance still requires verification.")
+            return 0
         model=_load(args)
         out=_out(args.output,args.overwrite)
         frame=_csv(args.input)
@@ -185,12 +263,14 @@ def main(argv=None) -> int:
             print(f"Saved {len(result)} candidate records to {out}");return 0
         X,_,canonical=_features(frame,args);y=_targets(frame,args)
         groups=canonical
-        if groups is None and args.group_column:
+        if args.group_column:
             if args.group_column not in frame: raise STCAError('Group column missing.')
             groups=frame[args.group_column].astype(str).to_numpy()
         if args.ec_input_unit and model.artifact['target_unit']!='log10(S/cm)':
             raise STCAError('EC conversion does not match the model stored unit.')
-        metrics=model.evaluate(X,y,tier=args.tier,cutoff_mode=args.cutoff_mode,cutoff=args.cutoff,groups=groups)
+        if model.provenance.get('group_identity_kind')=='PID' and not args.group_column:
+            raise STCAError('This reference model stores PID identities; evaluation requires --group-column. Screening needs no groups.')
+        metrics=model.evaluate(X,y,tier=args.tier,cutoff_mode=args.cutoff_mode,cutoff=args.cutoff,groups=groups,allow_overlap=args.allow_overlap)
         dump_json(out,metrics,overwrite=args.overwrite)
         print(json.dumps(metrics,indent=2));return 0
     except (STCAError,FileNotFoundError,FileExistsError,ImportError,KeyError) as exc:

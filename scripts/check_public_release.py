@@ -23,6 +23,7 @@ except ModuleNotFoundError:
             "Install it with: python -m pip install tomli"
         ) from exc
 
+
 PAPER_TITLE = (
     "Interpretable Substructure-Based Screening of Multi-Property Polymer "
     "Dielectrics with Prompt-Ready Rules for Rational Design"

@@ -167,7 +167,7 @@ def test_negative_raw_ec_rejected():
 
 
 def test_archived_warning_and_cutoff_guard():
-    with pytest.warns(ArchivedProfileWarning): m=load_pretrained('tg')
+    with pytest.warns(ArchivedProfileWarning): m=load_pretrained('tg',protocol='legacy_snapshot')
     X=np.zeros((3,167),int)
     with pytest.raises(STCAError,match='no verified numerical'):m.evaluate(X,[1,2,3],tier=.2)
     with pytest.raises(STCAError):m.rule_for(.25)

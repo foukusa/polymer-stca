@@ -1,79 +1,63 @@
-# Local validation — 0.1.0rc2
+# Executed validation — STCA 1.0
 
-Date: 2026-09-20.
+Date: 2026-09-21. Existing GitHub Desktop checkout:
+**`D:\hongo\polymer-stca`**. The source ZIP places repository files directly at
+its root; no additional enclosing project directory is required.
 
 ## Executed checks
 
 | Check | Result |
 |---|---|
-| Source-tree pytest suite | **64 passed** |
-| Same suite against a separately installed wheel, outside the source tree | **64 passed** |
-| Same suite after simulated publish-template activation in a disposable fixture | **64 passed**; not real release authorization |
-| Wheel build through pip's PEP 517 interface, without build isolation | Passed |
-| Wheel install into a separate target directory | Passed |
-| Module location and version after installation | Verified: independent installation, `0.1.0rc2` |
-| Installed `stca --version`, screening CLI, synthetic training CLI and evaluation CLI | Passed |
-| All three bundled example scripts against the installed wheel | Passed |
-| Local Git repository, tag, and `pip install ... git+file://...@v0.1.0rc2` | Passed; no remote GitHub access or upload |
-| Wheel core metadata validation using `packaging.metadata.Metadata` | Passed |
-| `License-Expression`, LICENSE/NOTICE inclusion, wheel RECORD sizes/hashes | Passed |
-| Source distribution build and wheel rebuild from the extracted sdist | Passed |
-| README local-document links and Python example syntax | Passed |
-| Original rc1 vs rc2 package-code AST comparison | Identical except the package version constant |
-| Original rc1 vs rc2 archived JSON files | All three byte-for-byte identical |
-| Delivered public-release gate | Correctly blocks missing remote URLs and unconfirmed authorization/name/scope flags |
+| Runtime, package metadata, citation and packaged model version fields | 1.0 throughout |
+| Source test suite | 148 passed |
+| Installed wheel, tests launched outside source directory | 148 passed |
+| Fresh refit from the five author-provided result archives | PASS_RULE_FAMILY_SCORE_PARITY |
+| Installed-wheel refit from the same archives | PASS_RULE_FAMILY_SCORE_PARITY |
+| Paper-protocol final rules | 11 / 11 match |
+| Matched source-locked final rules | 11 / 11 match |
+| Archived rule/scope metric rows | 1,251 / 1,251 match |
+| Saved-recipe refit consistency | 6 / 6 models match |
+| Model and family JSON semantics versus the supplied verified artifacts | Unchanged after excluding package-version metadata |
+| Update applied to three recognized supplied source trees | All succeed, idempotent; Git config and private-data fixtures preserved |
+| Unknown source edits / modified scientific snapshots / wrong target path | Refused before repository writes |
+| Source Python 3.10 grammar parsing | Passed; not a Python 3.10 execution test |
 
-The 54 original tests remain, with 10 additional documented-usage/release tests.
-The new tests cover README attribution, version/license metadata, exact output
-columns, ID alignment, invalid-input reporting, joint masks, the synthetic SMILES
-demo, and release tooling. Temporary positive-approval fixtures exist only inside
-local tests; the delivered repository contains **no affirmative release approval**.
+The complete test suite includes the new single-version, repository-layout and
+safe-updater regression tests, not only the numerical training tests. Source and
+wheel refits regenerate fingerprints and train from measured labels; they do not
+inject the saved reference winner. Model rules, cutoffs, families and scientific
+selection logic were not changed by the requested directory/version alignment.
 
-## Tested environment
+## Packaging and hash semantics
 
-Linux; CPython 3.13.5; NumPy 2.3.5; pandas 2.2.3; SciPy 1.17.0;
-RDKit 2025.09.4; pytest 9.0.2; setuptools 82.0.1; packaging 25.0; pip 25.1.1.
-Wheel construction used the available setuptools backend and its wheel support.
+All model `package_version` fields are 1.0. The three archived SI snapshots keep
+all their scientific JSON fields unchanged. Their distributed-file hashes were
+therefore updated to identify the actual STCA 1.0 bytes, not misreported as the
+byte hashes of differently labeled files. `paper-audit` still independently
+checks rule literals and file integrity. It is not itself a fresh numerical fit.
 
-Installation tests used `--no-deps` with existing scientific dependencies. The
-builds used `--no-build-isolation`; this is not a fresh online resolution of the
-full dependency set on a pristine operating system. The optional `build` frontend
-and `twine` were not available in this runtime, so `python -m build` and
-`python -m twine check` were **not executed here**. Their standard commands remain
-in the maintainer guide and CI configuration; do not interpret them as local
-passes. Wheel metadata was checked separately with `packaging.metadata`.
+The public ZIP/wheel contain no raw author measurement tables, PID/SMILES tables,
+private input archives or per-material evaluation outputs. The aggregate files
+in `validation/` record the numerical checks. Versioning and packaging do not
+grant public-distribution permission; supplied license terms are retained.
 
-## Scientific boundaries
+## Environment and limits
 
-The original threshold-frequency, signed-prefix, EC-role, cutoff, rule-freezing,
-serialization, group-audit, strict PID, invalid-input and archive-mask tests are
-retained. They verify implementation behavior, not original-data performance.
+The executed environment is Linux, CPython 3.13.5, NumPy 2.3.5, pandas 2.2.3,
+SciPy 1.17.0 and RDKit 2025.09.4. The installed-wheel environment reused those
+local dependencies via an explicit dependency path; it was not a fresh online
+dependency-resolution test. Wheel and source distributions were built with the
+installed setuptools build backend. The build/Twine frontend commands documented
+for maintainers were not executed here because those frontend tools were not
+installed in this runtime.
 
-No complete original Tg/EC measurement input/result set was executed for this
-update. Original TP/FP/MCC/F1 tables and final-paper numerical reproduction remain
-unverified. The three built-in assets retain their SI-20260822 core-scope archive
-status and missing historical numeric cutoffs. They were not promoted to final
-paper models by this documentation release.
+The PowerShell transcript and GitHub Actions have **not** run on the user's
+Windows machine in this session. The Python 3.10.6 CI is provided for that check.
+No remote GitHub push or PyPI upload was performed.
 
-The examples' synthetic targets are software fixtures, not measured material
-properties and not scientific benchmarks. Local tests also do not establish
-Windows/macOS compatibility or every permitted Python/dependency combination.
-Remote CI jobs, PyPI/TestPyPI uploads and GitHub publication were not performed.
-
-## Re-run locally
-
-With online dependency access and the appropriate permission:
-
-```bash
-python -m pip install ".[chem,dev]"
-python -m pytest -q
-python examples/screen_profiles.py
-python examples/train_binary_demo.py
-python examples/train_smiles_demo.py
-python -m build
-python -m twine check dist/*
-```
-
-Before any public upload, separately review `docs/RELEASING.md`, the real metadata,
-license compatibility and public-distribution authorization. A successful local
-build does not establish those facts.
+The archived core protocol uses historical extra labels in representative
+selection, so the parity results are not untouched-test accuracy claims. The EC
+split is reconstructed from row order and gated against the archived metrics;
+thermal precomputed coefficients are not identical to a fresh scan even though
+the used rankings and final results agree. These qualifications, and the SI
+analyses not rerun, remain in `docs/VERIFIED_RESULTS.md`.

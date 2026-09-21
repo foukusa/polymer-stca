@@ -1,0 +1,7 @@
+profile,protocol,status,fresh_fit_from_saved_recipe,all_record_masks_equal
+tg-high,paper,MATCH,True,True
+tg-high,source_locked,MATCH,True,True
+ec-low,paper,MATCH,True,True
+ec-low,source_locked,MATCH,True,True
+ec-high,paper,MATCH,True,True
+ec-high,source_locked,MATCH,True,True

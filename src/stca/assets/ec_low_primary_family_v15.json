@@ -1,0 +1,176 @@
+{
+  "schema": "stca-prefix-family-v1",
+  "profile": "ec-low",
+  "tiers": {
+    "0.2": [
+      {
+        "name": "top 1 pos",
+        "positive_n": 1,
+        "negative_n": 0,
+        "source_family_rank": 1
+      },
+      {
+        "name": "top 30 neg",
+        "positive_n": 0,
+        "negative_n": 30,
+        "source_family_rank": 2
+      },
+      {
+        "name": "top 1 pos + top 11~20 neg",
+        "positive_n": 1,
+        "negative_n": 11,
+        "source_family_rank": 3
+      },
+      {
+        "name": "top pos 1 + top neg 30",
+        "positive_n": 1,
+        "negative_n": 30,
+        "source_family_rank": 4
+      },
+      {
+        "name": "top 1 pos + top 9~10 neg",
+        "positive_n": 1,
+        "negative_n": 9,
+        "source_family_rank": 5
+      },
+      {
+        "name": "top 11~15 neg",
+        "positive_n": 0,
+        "negative_n": 11,
+        "source_family_rank": 6
+      }
+    ],
+    "0.15": [
+      {
+        "name": "top 1 pos",
+        "positive_n": 1,
+        "negative_n": 0,
+        "source_family_rank": 1
+      },
+      {
+        "name": "top 1 pos + top 11~20 neg",
+        "positive_n": 1,
+        "negative_n": 11,
+        "source_family_rank": 2
+      },
+      {
+        "name": "top pos 1 + top neg 30",
+        "positive_n": 1,
+        "negative_n": 30,
+        "source_family_rank": 3
+      },
+      {
+        "name": "top 1 pos + top 9~10 neg",
+        "positive_n": 1,
+        "negative_n": 9,
+        "source_family_rank": 4
+      },
+      {
+        "name": "top 11~15 neg",
+        "positive_n": 0,
+        "negative_n": 11,
+        "source_family_rank": 5
+      },
+      {
+        "name": "top 30 neg",
+        "positive_n": 0,
+        "negative_n": 30,
+        "source_family_rank": 6
+      }
+    ],
+    "0.1": [
+      {
+        "name": "top 2 pos",
+        "positive_n": 2,
+        "negative_n": 0,
+        "source_family_rank": 1
+      },
+      {
+        "name": "top 30 neg",
+        "positive_n": 0,
+        "negative_n": 30,
+        "source_family_rank": 2
+      },
+      {
+        "name": "top 1 pos + top 11~20 neg",
+        "positive_n": 1,
+        "negative_n": 11,
+        "source_family_rank": 3
+      },
+      {
+        "name": "top 1 pos + top 30 neg",
+        "positive_n": 1,
+        "negative_n": 30,
+        "source_family_rank": 4
+      },
+      {
+        "name": "top 1 pos + top 9~10 neg",
+        "positive_n": 1,
+        "negative_n": 9,
+        "source_family_rank": 5
+      },
+      {
+        "name": "top 11~15 neg",
+        "positive_n": 0,
+        "negative_n": 11,
+        "source_family_rank": 6
+      }
+    ],
+    "0.05": [
+      {
+        "name": "top 3 pos",
+        "positive_n": 3,
+        "negative_n": 0,
+        "source_family_rank": 1
+      },
+      {
+        "name": "top 30 neg",
+        "positive_n": 0,
+        "negative_n": 30,
+        "source_family_rank": 2
+      },
+      {
+        "name": "top 3 pos + top 30 neg",
+        "positive_n": 3,
+        "negative_n": 30,
+        "source_family_rank": 3
+      },
+      {
+        "name": "top 3 pos + top 1~17 neg",
+        "positive_n": 3,
+        "negative_n": 1,
+        "source_family_rank": 4
+      },
+      {
+        "name": "top 1 pos + top 11~20 neg",
+        "positive_n": 1,
+        "negative_n": 11,
+        "source_family_rank": 5
+      },
+      {
+        "name": "top 1 pos + top 9~10 neg",
+        "positive_n": 1,
+        "negative_n": 9,
+        "source_family_rank": 6
+      },
+      {
+        "name": "top 1 pos + top 30 neg",
+        "positive_n": 1,
+        "negative_n": 30,
+        "source_family_rank": 7
+      }
+    ]
+  },
+  "provenance": {
+    "kind": "uploaded_v15_complete_primary_family",
+    "source_file": "BOTTOM_and_TOP_EC_picked_family_all_members.csv",
+    "sha256": "1bd5ce7e6ab77701ec9122952898e59c3978333f731186a06734ca6c47f96488",
+    "source_rule_count": 25,
+    "rule_order": "family_member_rank",
+    "literal_values_stored": false,
+    "scores_stored": false,
+    "external_scores_used_by_importer": false,
+    "source_archive": "reviewer_ready_electrical_family_transfer_structure_outputs_v15.zip",
+    "role": "Predeclared candidate lengths, NOT fixed feature identities or preselected winners."
+  }
+}
