@@ -1,5 +1,5 @@
 # Copyright (c) 2025, The University of Tokyo, University College London
-# SPDX-License-Identifier: LicenseRef-STCA-Academic-Peer-Review
+# SPDX-License-Identifier: LicenseRef-STCA-Academic-NonCommercial
 """Stage STCA 1.0 directly in an existing checkout; dry-run by default.
 
 No network, Git operations, data deletion or automatic publication. Unknown
@@ -19,6 +19,18 @@ import sys
 SOURCE = Path(__file__).resolve().parents[1]
 MANIFEST = SOURCE / 'scripts/update_manifest.json'
 VERSION = '1.0'
+LICENSE_ID = 'LicenseRef-STCA-Academic-NonCommercial'
+LEGACY_LICENSE_ID = 'LicenseRef-STCA-Academic-Peer-Review'
+LEGACY_LICENSE = (
+    'Copyright (c) 2025, The University of Tokyo, University College London\n\n'
+    'This code is provided for academic peer review purposes under npj '
+    'Computational Materials submission guidelines. Commercial use and '
+    'redistribution require written permission.\n'
+)
+COPYRIGHT_LINE = re.compile(
+    r'^Copyright \(c\) ([0-9]{4}(?:[-–][0-9]{4})?), '
+    r'The University of Tokyo, University College London$', re.MULTILINE)
+
 
 
 def sha(content: bytes) -> str:
@@ -125,6 +137,14 @@ def pyproject_edit(text: str) -> str:
         if len(re.findall(rx, block)) != 1:
             raise ValueError('Ambiguous project version in pyproject.toml.')
         block = re.sub(rx, lambda m: m[1] + VERSION + m[2], block)
+        license_rx = r'(?m)^(license\s*=\s*")([^"\n]+)("[^\n]*)$'
+        licenses = re.findall(license_rx, block)
+        if len(licenses) != 1 or licenses[0][1] not in (LICENSE_ID, LEGACY_LICENSE_ID):
+            raise ValueError('Unrecognized license metadata; merge pyproject.toml explicitly.')
+        block = re.sub(license_rx, lambda m: m[1] + LICENSE_ID + m[3], block)
+        block = block.replace(
+            'Interpretable STCA rule screening with archived Tg/EC profiles and custom-data training',
+            'Interpretable polymer screening with pretrained Tg/EC rules and custom-data training')
         # A version label is not a production-maturity certification.
         block = re.sub(r'(?m)^\s*"Development Status :: [^"]+",?\s*\n', '', block)
         return block
@@ -141,7 +161,16 @@ def pyproject_edit(text: str) -> str:
     if not re.search(r'(?m)^\[project\.urls\]', text):
         text += ('\n[project.urls]\nRepository = "https://github.com/foukusa/polymer-stca"\n'
                  'Issues = "https://github.com/foukusa/polymer-stca/issues"\n')
-    return text
+    def urls(block):
+        expected = 'https://doi.org/10.24433/CO.1601774.v1'
+        rx = r'(?m)^"Code Ocean"\s*=\s*"([^"\n]+)"[^\n]*$'
+        values = re.findall(rx, block)
+        if len(values) > 1 or (values and values[0] != expected):
+            raise ValueError('Conflicting Code Ocean URL; merge pyproject.toml explicitly.')
+        if not values:
+            return block.rstrip() + '\n"Code Ocean" = "' + expected + '"\n\n'
+        return block
+    return section_edit(text, 'project.urls', urls)
 
 
 def md_section(text: str, heading: str) -> str | None:
@@ -155,7 +184,7 @@ def md_section(text: str, heading: str) -> str | None:
 
 def readme_edit(old: str, license_text: str) -> str:
     new = (SOURCE / 'README.md').read_text(encoding='utf-8')
-    for heading in ('Contact', 'Acknowledgments'):
+    for heading in ('Contact',):
         existing, current = md_section(old, heading), md_section(new, heading)
         if existing and current:
             new = new.replace(current, existing, 1)
@@ -165,10 +194,47 @@ def readme_edit(old: str, license_text: str) -> str:
     return new.replace(section, license_text.strip(), 1)
 
 
+def license_signature(text: str) -> str:
+    """Compare known terms without changing the maintainer's copyright year."""
+    text = text.replace('\r\n', '\n').strip()
+    if len(COPYRIGHT_LINE.findall(text)) != 1:
+        raise ValueError('Expected the supplied institutional copyright line.')
+    return COPYRIGHT_LINE.sub(
+        'Copyright (c) YEAR, The University of Tokyo, University College London', text)
+
+
+def license_plan(repo: Path, rules: dict, update_license: bool):
+    current = safe_path(repo, 'LICENSE').read_bytes()
+    notice = safe_path(repo, 'NOTICE').read_bytes()
+    supplied = (SOURCE / 'LICENSE').read_text(encoding='utf-8')
+    actual = current.decode('utf-8-sig').replace('\r\n', '\n')
+    desired = license_signature(supplied)
+    actual_signature = license_signature(actual)
+    if not update_license:
+        if actual_signature != desired:
+            raise ValueError(
+                'LICENSE_UPDATE_REQUIRED: review the supplied academic-use LICENSE '
+                'and add --update-license to migrate the previous permission terms. '
+                'No files were changed.')
+        return current, notice
+    if actual_signature not in (desired, license_signature(LEGACY_LICENSE)):
+        raise ValueError('LOCAL_LICENSE_CONFLICT: unrecognized terms; merge LICENSE explicitly.')
+    copyright_line = COPYRIGHT_LINE.search(actual).group(0)
+    updated = COPYRIGHT_LINE.sub(lambda _: copyright_line, supplied).encode('utf-8')
+    notice_signature = sha(license_signature(notice.decode('utf-8-sig')).encode('utf-8'))
+    if notice_signature not in rules['known_notice_signatures']:
+        raise ValueError('LOCAL_NOTICE_CONFLICT: unrecognized NOTICE edits; merge it explicitly.')
+    new_notice = COPYRIGHT_LINE.sub(
+        lambda _: copyright_line, (SOURCE / 'NOTICE').read_text(encoding='utf-8'))
+    return updated, new_notice.encode('utf-8')
+
+
 def main(argv=None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--repo', default=r'D:\hongo\polymer-stca')
     parser.add_argument('--apply', action='store_true')
+    parser.add_argument('--update-license', action='store_true',
+                        help='Explicitly apply the maintainer-supplied academic-use LICENSE/NOTICE.')
     args = parser.parse_args(argv)
     repo = Path(args.repo).resolve()
     if repo == SOURCE or SOURCE.is_relative_to(repo):
@@ -180,16 +246,22 @@ def main(argv=None) -> int:
     rules = json.loads(MANIFEST.read_text(encoding='utf-8'))
     if rules['version'] != VERSION:
         raise ValueError('Update manifest version mismatch.')
+    # Specially merged documents are checked just like ordinary payload text.
+    for relative, item in rules.get('reference_files', {}).items():
+        verified_payload(safe_path(SOURCE, relative).read_bytes(), item, relative)
     plan = []
     def add(relative, new):
         target = safe_path(repo, relative)
         old = target.read_bytes() if target.exists() else None
         if old != new:
             plan.append((relative, old, new))
-    # LICENSE and NOTICE are retained, not rewritten or deleted.
+    # Permission changes require explicit opt-in; unknown terms are never replaced.
     for relative in ('LICENSE', 'NOTICE'):
         if not safe_path(repo, relative).is_file():
             raise ValueError(f'Missing protected license file: {relative}')
+    license_bytes, notice_bytes = license_plan(repo, rules, args.update_license)
+    add('LICENSE', license_bytes)
+    add('NOTICE', notice_bytes)
     # Snapshot package labels can change; the scientific JSON must not change.
     for relative, digest in rules['protected_scientific_assets'].items():
         path = safe_path(repo, relative)
@@ -219,7 +291,7 @@ def main(argv=None) -> int:
         raise ValueError('Target project name is not polymer-stca.')
     add('pyproject.toml', pyproject_edit(pp).encode())
     old_readme = safe_path(repo, 'README.md').read_text(encoding='utf-8-sig')
-    add('README.md', readme_edit(old_readme, (repo / 'LICENSE').read_text(encoding='utf-8-sig')).encode())
+    add('README.md', readme_edit(old_readme, license_bytes.decode('utf-8-sig')).encode())
     ignore_path = safe_path(repo, '.gitignore')
     ignore = ignore_path.read_text(encoding='utf-8-sig') if ignore_path.exists() else ''
     extra = [line for line in (SOURCE / '.gitignore').read_text().splitlines()
@@ -231,7 +303,9 @@ def main(argv=None) -> int:
     for relative, old, new in plan:
         label = 'RETIRE' if new is None else ('ADD' if old is None else 'UPDATE')
         print(f'{label} {relative}')
-    print('.git, local data/results, license text, contact details and project URLs are preserved.')
+    print('.git, local data/results, contact details and existing project URLs are preserved.')
+    print('Academic-use LICENSE/NOTICE migration explicitly enabled.' if args.update_license
+          else 'Existing academic-use LICENSE and NOTICE are preserved.')
     if not args.apply:
         print('DRY RUN ONLY. Review this plan, then add --apply.')
         return 0

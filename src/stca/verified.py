@@ -1,5 +1,5 @@
 # Copyright (c) 2025, The University of Tokyo, University College London
-# SPDX-License-Identifier: LicenseRef-STCA-Academic-Peer-Review
+# SPDX-License-Identifier: LicenseRef-STCA-Academic-NonCommercial
 """Real-data refit against the five author-supplied output archives.
 
 Only known text/CSV members are read; archives are never extracted or executed.

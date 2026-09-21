@@ -1,5 +1,5 @@
 # Copyright (c) 2025, The University of Tokyo, University College London
-# SPDX-License-Identifier: LicenseRef-STCA-Academic-Peer-Review
+# SPDX-License-Identifier: LicenseRef-STCA-Academic-NonCommercial
 """Synthetic algorithm fixtures, not experimental Tg/EC performance results."""
 from dataclasses import replace
 from pathlib import Path

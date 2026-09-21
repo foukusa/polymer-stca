@@ -2,22 +2,28 @@
 
 Repository: https://github.com/foukusa/polymer-stca
 
-Local GitHub Desktop checkout: `D:\hongo\polymer-stca`
+## Description
 
-Description:
-
-> Interpretable STCA screening of polymer dielectrics with fitted Tg/EC rules, paired custom-data training and reproducible rule verification.
+> Interpretable substructure screening of polymer dielectrics, with pretrained Tg/EC rules and custom-data training.
 
 Topics: `polymer`, `dielectrics`, `stca`, `screening`, `maccs`, `interpretable-machine-learning`, `python`
 
-Release title: **STCA 1.0**
+## Release description
 
-Suggested release note:
+**STCA 1.0** provides high-Tg, low-EC and high-EC screening, custom training,
+explainable rule outputs, batch CSV processing, and reusable JSON models.
 
-> STCA 1.0 provides high-Tg, low-EC and high-EC rule screening, explicit paper/source-locked training protocols, model export, CLI examples and documented real-data parity checks. The same reference inputs and protocol reproduce paired pretrained rules. See the validation report for selection-scope, split-reconstruction and environment limitations. Raw research data are not redistributed.
+The recommended online reproduction release is on
+[Code Ocean](https://doi.org/10.24433/CO.1601774.v1). A PyPI release is coming
+soon; source installation is available in the meantime.
 
-The repository root directly contains `pyproject.toml`, `README.md`, `src/` and
-`tests/`. Do not upload only a ZIP and do not nest another project directory.
-Review local changes in GitHub Desktop, commit them and then push to origin.
-Creating the release/tag `v1.0` does not upload files to PyPI automatically unless
-an authorized publishing workflow has been separately configured.
+The software is available for non-commercial academic research, education,
+and scientific reproduction. See LICENSE for the full terms; commercial use
+and redistribution require prior written permission.
+
+## Maintainer notes
+
+The existing GitHub Desktop checkout is `D:\hongo\polymer-stca`.
+The repository root contains `pyproject.toml`, `README.md`, `src/` and `tests/`
+directly. See [LOCAL_UPDATE.md](LOCAL_UPDATE.md) for updating that checkout.
+GitHub publication and PyPI publication are separate operations.

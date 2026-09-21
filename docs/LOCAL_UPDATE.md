@@ -2,7 +2,7 @@
 
 **Destination: `D:\hongo\polymer-stca`**
 
-`STCA_1.0_GitHub.zip` has no enclosing project directory. Its root contains
+`STCA_1.0_GitHub_Documentation.zip` has no enclosing project directory. Its root contains
 `pyproject.toml`, `README.md`, `LICENSE`, `src/`, `tests/`, `scripts/`, `docs/`
 and `.github/`. Do not create another `polymer-stca` inside the existing checkout.
 
@@ -14,15 +14,15 @@ PowerShell (not a Python `>>>` prompt):
 & {
     $ErrorActionPreference = "Stop"
     $Repo = "D:\hongo\polymer-stca"
-    $Zip = Join-Path $env:USERPROFILE "Downloads\STCA_1.0_GitHub.zip"
+    $Zip = Join-Path $env:USERPROFILE "Downloads\STCA_1.0_GitHub_Documentation.zip"
     $Stage = Join-Path $env:TEMP ("STCA_update_" + [guid]::NewGuid().ToString("N"))
     if (-not (Test-Path -LiteralPath "$Repo\pyproject.toml")) { throw "Project root not found: $Repo" }
     if (-not (Test-Path -LiteralPath "$Repo\.git")) { throw "Not the GitHub Desktop checkout: $Repo" }
     if (-not (Test-Path -LiteralPath $Zip -PathType Leaf)) { throw "Download the source ZIP first: $Zip" }
     Expand-Archive -LiteralPath $Zip -DestinationPath $Stage
-    python "$Stage\scripts\apply_update.py" --repo "$Repo"
+    python "$Stage\scripts\apply_update.py" --repo "$Repo" --update-license
     if ($LASTEXITCODE -ne 0) { throw "Preflight failed; repository not changed." }
-    python "$Stage\scripts\apply_update.py" --repo "$Repo" --apply
+    python "$Stage\scripts\apply_update.py" --repo "$Repo" --update-license --apply
     if ($LASTEXITCODE -ne 0) { throw "Update failed; inspect the reported conflict." }
     Set-Location -LiteralPath $Repo
     python -m pip install ".[chem,dev]"
@@ -35,7 +35,11 @@ PowerShell (not a Python `>>>` prompt):
 ```
 
 The updater leaves `.git`, raw inputs, private results and unlisted files alone.
-It preserves existing license/notice contents, contact details and project URLs.
+It preserves contact details and project URLs. The explicit `--update-license`
+option migrates the known peer-review-only license to the supplied academic-use
+terms and updates NOTICE, while retaining the institutional copyright line.
+Unknown local license or notice changes stop preflight for manual review.
+Without this option, existing matching academic-use terms are preserved.
 Existing source edits must match a recognized input; unrecognized edits stop the
 entire preflight before any repository file is changed. Recognized obsolete
 package documentation is backed up before retirement, not silently deleted.

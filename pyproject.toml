@@ -5,9 +5,9 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "polymer-stca"
 version = "1.0"
-description = "Interpretable STCA rule screening with archived Tg/EC profiles and custom-data training"
+description = "Interpretable polymer screening with pretrained Tg/EC rules and custom-data training"
 readme = "README.md"
-license = "LicenseRef-STCA-Academic-Peer-Review"
+license = "LicenseRef-STCA-Academic-NonCommercial"
 license-files = ["LICENSE", "NOTICE"]
 maintainers = [
   {name = "Weihao Wang", email = "wang@hvg.t.u-tokyo.ac.jp"},
@@ -42,3 +42,5 @@ Homepage = "https://github.com/foukusa/polymer-stca"
 Repository = "https://github.com/foukusa/polymer-stca"
 Issues = "https://github.com/foukusa/polymer-stca/issues"
 Documentation = "https://github.com/foukusa/polymer-stca#readme"
+"Code Ocean" = "https://doi.org/10.24433/CO.1601774.v1"
+

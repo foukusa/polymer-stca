@@ -8,7 +8,7 @@ Existing GitHub Desktop checkout: **`D:\hongo\polymer-stca`**
 
 ## Repository layout and local update
 
-`STCA_1.0_GitHub.zip` contains the repository files at the ZIP root. The resulting
+`STCA_1.0_GitHub_Documentation.zip` contains the repository files at the ZIP root. The resulting
 checkout must have `D:\hongo\polymer-stca\pyproject.toml` and
 `D:\hongo\polymer-stca\src\stca`. There is no second enclosing project directory.
 Keep `.git` and local/private data. Follow [LOCAL_UPDATE.md](LOCAL_UPDATE.md) for a

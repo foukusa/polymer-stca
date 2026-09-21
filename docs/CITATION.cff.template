@@ -4,6 +4,7 @@ title: "STCA: interpretable polymer substructure screening"
 version: "1.0"
 type: software
 repository-code: "https://github.com/foukusa/polymer-stca"
+url: "https://doi.org/10.24433/CO.1601774.v1"
 authors:
   - family-names: "REPLACE_WITH_VERIFIED_FAMILY_NAME"
     given-names: "REPLACE_WITH_VERIFIED_GIVEN_NAME"
@@ -16,3 +17,4 @@ preferred-citation:
       given-names: "REPLACE_WITH_VERIFIED_GIVEN_NAME"
 # Add the complete verified author lists, publication
 # metadata. Do not use copyright holders as a substitute for the paper authors.
+# The url above is the Code Ocean capsule; do not insert it as the article DOI.

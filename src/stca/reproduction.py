@@ -1,5 +1,5 @@
 # Copyright (c) 2025, The University of Tokyo, University College London
-# SPDX-License-Identifier: LicenseRef-STCA-Academic-Peer-Review
+# SPDX-License-Identifier: LicenseRef-STCA-Academic-NonCommercial
 """Replay a saved real-data manifest with separately declared selection protocols.
 
 Never loads manuscript metrics into fit. Never replaces newly discovered rules

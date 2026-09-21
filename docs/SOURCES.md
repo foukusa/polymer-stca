@@ -1,5 +1,9 @@
 # Sources and provenance
 
+## Recommended online reproduction
+
+[Code Ocean research capsule](https://doi.org/10.24433/CO.1601774.v1), as supplied by the project maintainer. The DOI refers to that capsule, not the journal article. Use the capsule's own metadata and terms when citing or reusing its contents.
+
 Associated manuscript: **Interpretable Substructure-Based Screening of Multi-Property Polymer Dielectrics with Prompt-Ready Rules for Rational Design**, npj Computational Materials.
 
 The numerical inputs are the **five author-provided research result archives**, not an online substitute database, generated targets, or earlier smoke-test fixtures. Actual relevant internal paths, row counts, reconstructed electrical membership, matched quantities and limitations are documented in [VERIFIED_RESULTS.md](VERIFIED_RESULTS.md).

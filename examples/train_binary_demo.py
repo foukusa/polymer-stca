@@ -1,6 +1,6 @@
 # Copyright (c) 2025, The University of Tokyo, University College London
-# SPDX-License-Identifier: LicenseRef-STCA-Academic-Peer-Review
-# See LICENSE for academic peer review and permission requirements.
+# SPDX-License-Identifier: LicenseRef-STCA-Academic-NonCommercial
+# See LICENSE for academic-use terms and permission requirements.
 
 """Executable SYNTHETIC demo. Values are simulated, not material measurements."""
 from pathlib import Path

@@ -1,27 +1,27 @@
 STCA / polymer-stca
 
-Associated manuscript:
+Related paper:
 Interpretable Substructure-Based Screening of Multi-Property Polymer Dielectrics with Prompt-Ready Rules for Rational Design
 Journal: npj Computational Materials
 
 Copyright (c) 2025, The University of Tokyo, University College London
-See LICENSE for the supplied academic-peer-review permission terms.
-The copyright year is retained as supplied by the project maintainer.
+See LICENSE for non-commercial academic-use terms and permission requirements
+for commercial use and redistribution.
 
 Maintainer contact: wang@hvg.t.u-tokyo.ac.jp
 Laboratory: Kumada-Sato-Fujii-Umemoto Laboratory
 Institution: Department of Electrical Engineering & Information Systems,
 University of Tokyo
 
-This package is a portable implementation of the documented STCA workflow.
-The bundled Tg/EC rule assets originate from the SI-20260822 core-scope
-snapshot recorded in docs/SOURCES.md. They are not newly certified final-paper
-artifacts. No original measurement database is included.
+Recommended online research reproduction:
+https://doi.org/10.24433/CO.1601774.v1
+This DOI identifies the Code Ocean research capsule, not the journal article.
+The capsule and any data it supplies remain subject to their own stated terms.
 
-The license statement is supplied by the project maintainer. Mention of the
-journal identifies the submission context; it does not imply journal authorship,
-endorsement, or that this permission text is prescribed by the journal.
+Pretrained Tg and EC models and their source records are described in
+README.md and docs/SOURCES.md. Original measurement databases are not
+included in this package.
 
-Third-party dependencies remain subject to their respective licenses. They are
-not relicensed by this project's notice. This distribution does not vendor RDKit,
-NumPy, pandas, SciPy, GitHub Actions implementations, or upstream source code.
+Third-party dependencies remain subject to their respective licenses.
+This notice does not relicense RDKit, NumPy, pandas, SciPy or other upstream
+software. Naming the journal does not imply journal authorship or endorsement.

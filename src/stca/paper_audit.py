@@ -1,5 +1,5 @@
 # Copyright (c) 2025, The University of Tokyo, University College London
-# SPDX-License-Identifier: LicenseRef-STCA-Academic-Peer-Review
+# SPDX-License-Identifier: LicenseRef-STCA-Academic-NonCommercial
 """Independent archived-table checks; reference values never enter STCA.fit()."""
 from __future__ import annotations
 import hashlib

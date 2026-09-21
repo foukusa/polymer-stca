@@ -12,3 +12,12 @@ The public distribution version is **1.0** throughout the project metadata,
 runtime version, packaged model metadata, installation examples and citation.
 The source ZIP expands directly into a repository root; it does not contain an
 extra parent project directory.
+
+## Documentation and academic-use terms
+
+- Refocus the README on screening and training; move extended workflow and
+  reproduction instructions to the documentation.
+- Link the recommended Code Ocean release and announce the planned PyPI release.
+- Replace peer-review-only terms with non-commercial academic-use terms and
+  remove the acknowledgments section.
+- Keep the software version at 1.0 and retain the trained models and algorithms.

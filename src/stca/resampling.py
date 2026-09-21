@@ -1,5 +1,5 @@
 # Copyright (c) 2025, The University of Tokyo, University College London
-# SPDX-License-Identifier: LicenseRef-STCA-Academic-Peer-Review
+# SPDX-License-Identifier: LicenseRef-STCA-Academic-NonCommercial
 """Explicit fixed-membership record-level full-discovery resampling.
 
 This is not a canonical-grouped split experiment or a recreation of unseen SI

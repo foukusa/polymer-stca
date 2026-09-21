@@ -4,7 +4,24 @@ Date: 2026-09-21. Existing GitHub Desktop checkout:
 **`D:\hongo\polymer-stca`**. The source ZIP places repository files directly at
 its root; no additional enclosing project directory is required.
 
-## Executed checks
+## Documentation and licensing maintenance
+
+The README now focuses on installation, screening, and custom training. It
+announces the planned PyPI release, links the maintainer-supplied Code Ocean
+DOI, and omits acknowledgments. LICENSE, NOTICE, Python package metadata and
+source copyright headers use the non-commercial academic-use terms.
+
+The maintenance check ran **186 tests successfully** in the Linux/Python 3.13.5
+runtime, including the README examples, license migration, Git newline handling,
+and preservation of private data and local contact information. The existing
+scientific package's **20 Python ASTs are unchanged**, and all **13 asset files**
+are byte-identical. No new scientific refit was required or claimed.
+
+The Code Ocean URL was supplied by the maintainer. Its landing page and hosted
+execution were not verified in this runtime; it is not substituted for the
+article DOI. No GitHub push or PyPI upload was performed.
+
+## Retained scientific and package-validation record
 
 | Check | Result |
 |---|---|

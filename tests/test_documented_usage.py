@@ -1,6 +1,6 @@
 # Copyright (c) 2025, The University of Tokyo, University College London
-# SPDX-License-Identifier: LicenseRef-STCA-Academic-Peer-Review
-# See LICENSE for academic peer review and permission requirements.
+# SPDX-License-Identifier: LicenseRef-STCA-Academic-NonCommercial
+# See LICENSE for academic-use terms and permission requirements.
 
 """Regression tests for the concrete README calls and release-only metadata gate."""
 import importlib.util
@@ -33,7 +33,7 @@ def _write_gate_fixture(root: Path) -> None:
         shutil.copy2(ROOT / name, root / name)
     (root / "pyproject.toml").write_text(
         '[project]\nname = "fixture-project"\nversion = "0.0.0"\n'
-        'license = "LicenseRef-STCA-Academic-Peer-Review"\n'
+        'license = "LicenseRef-STCA-Academic-NonCommercial"\n'
         'license-files = ["LICENSE", "NOTICE"]\n'
         'maintainers = [{name = "Fixture", email = "fixture@example.org"}]\n',
         encoding="utf-8",
@@ -57,7 +57,7 @@ def test_pyproject_license_and_version():
     # Python 3.10 compatibility without adding a toml parser to runtime dependencies.
     content = (ROOT / "pyproject.toml").read_text(encoding="utf-8")
     assert f'version = "{__version__}"' in content
-    assert 'license = "LicenseRef-STCA-Academic-Peer-Review"' in content
+    assert 'license = "LicenseRef-STCA-Academic-NonCommercial"' in content
     assert 'license-files = ["LICENSE", "NOTICE"]' in content
     assert 'wang@hvg.t.u-tokyo.ac.jp' in content
 
